@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { About } from "@/components/about";
 import { Contact } from "@/components/contact";
 import { Hero } from "@/components/hero";
@@ -14,10 +15,16 @@ const WEBSITE_JSON_LD = {
   author: { "@type": "Person", name: SITE.name, url: SITE.url },
 };
 
-export default function HomePage() {
+export default async function HomePage() {
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }} />
+      <script
+        nonce={nonce}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
+      />
       <Hero />
       <About />
       <Projects />

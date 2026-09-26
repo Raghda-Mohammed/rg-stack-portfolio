@@ -1,8 +1,41 @@
 import { createHash } from "node:crypto";
 
-const WINDOW_SECONDS = 10 * 60;
-const MAX_PER_WINDOW = 5;
-const KEY_PREFIX = "rg-stack:ratelimit:contact:v1";
+const KEY_PREFIX = "rg-stack:ratelimit";
+
+type Action = "contact" | "cv";
+
+type ActionConfig = {
+  windowSeconds: number;
+  maxPerWindow: number;
+  /**
+   * When Redis is unconfigured/unreachable in production, should the action
+   * fail closed (503, deny everyone) or fall back to a per-instance
+   * in-memory limiter?
+   *
+   * `contact` writes to the database and is the more attractive target for
+   * abuse, so it fails closed — a determined attacker who could somehow
+   * take Upstash offline should not be rewarded with an open door.
+   *
+   * `cv` only serves a small generated PDF with no side effects, so the
+   * cost of a false negative is low while the cost of blocking a real
+   * recruiter's download during a transient Redis blip is comparatively
+   * high. It degrades to the in-memory limiter instead of hard-failing.
+   */
+  failClosedInProduction: boolean;
+};
+
+const ACTION_CONFIG: Record<Action, ActionConfig> = {
+  contact: {
+    windowSeconds: 10 * 60,
+    maxPerWindow: 5,
+    failClosedInProduction: true,
+  },
+  cv: {
+    windowSeconds: 10 * 60,
+    maxPerWindow: 20,
+    failClosedInProduction: false,
+  },
+};
 
 type RateLimitResult =
   | {
@@ -70,26 +103,30 @@ async function redisPipeline(
   return (await response.json()) as Array<{ result?: unknown; error?: string }>;
 }
 
-function memoryRateLimit(key: string, now: number): RateLimitResult {
+function memoryRateLimit(
+  key: string,
+  now: number,
+  config: ActionConfig,
+): RateLimitResult {
   sweepMemoryStore(now);
   const existing = memoryStore.get(key);
 
   if (!existing || existing.resetAt <= now) {
-    const resetAt = now + WINDOW_SECONDS * 1000;
+    const resetAt = now + config.windowSeconds * 1000;
     memoryStore.set(key, { count: 1, resetAt });
     return {
       allowed: true,
       unavailable: false,
-      remaining: MAX_PER_WINDOW - 1,
+      remaining: config.maxPerWindow - 1,
       resetAt,
       source: "memory",
     };
   }
 
   existing.count += 1;
-  const remaining = Math.max(0, MAX_PER_WINDOW - existing.count);
+  const remaining = Math.max(0, config.maxPerWindow - existing.count);
 
-  if (existing.count > MAX_PER_WINDOW) {
+  if (existing.count > config.maxPerWindow) {
     return {
       allowed: false,
       unavailable: false,
@@ -112,19 +149,36 @@ export function hashClientIdentifier(identifier: string): string {
   return createHash("sha256").update(identifier).digest("hex");
 }
 
-export async function rateLimitContact(
+/**
+ * Derives a stable per-client identifier from request headers. Vercel
+ * supplies `x-forwarded-for` from the edge/proxy layer; the raw value is
+ * hashed by callers (via `hashClientIdentifier`) before it's ever used as a
+ * storage key or logged, so plain IP addresses are never persisted.
+ */
+export function clientIdentifierFromRequest(request: Request): string {
+  const forwarded = request.headers.get("x-forwarded-for");
+  const realIp = request.headers.get("x-real-ip");
+  return forwarded?.split(",")[0]?.trim() || realIp?.trim() || "local";
+}
+
+async function rateLimit(
+  action: Action,
   identifier: string,
 ): Promise<RateLimitResult> {
+  const config = ACTION_CONFIG[action];
   const now = Date.now();
-  const config = getRedisConfig();
-  const key = `${KEY_PREFIX}:${hashClientIdentifier(identifier)}`;
+  const redisConfig = getRedisConfig();
+  const key = `${KEY_PREFIX}:${action}:v1:${hashClientIdentifier(identifier)}`;
 
-  if (!config) {
-    if (process.env.NODE_ENV === "production") {
+  if (!redisConfig) {
+    if (
+      process.env.NODE_ENV === "production" &&
+      config.failClosedInProduction
+    ) {
       return { allowed: false, unavailable: true };
     }
 
-    return memoryRateLimit(key, now);
+    return memoryRateLimit(key, now, config);
   }
 
   try {
@@ -133,11 +187,11 @@ export async function rateLimitContact(
     // in it has been applied, so the key can never end up incremented
     // without a TTL.
     const [incrResult, expireResult] = await redisPipeline(
-      config.url,
-      config.token,
+      redisConfig.url,
+      redisConfig.token,
       [
         ["INCR", key],
-        ["EXPIRE", key, String(WINDOW_SECONDS), "NX"],
+        ["EXPIRE", key, String(config.windowSeconds), "NX"],
       ],
     );
 
@@ -145,9 +199,9 @@ export async function rateLimitContact(
     if (expireResult.error) throw new Error(expireResult.error);
 
     const count = incrResult.result as number;
-    const resetAt = now + WINDOW_SECONDS * 1000;
+    const resetAt = now + config.windowSeconds * 1000;
 
-    if (count > MAX_PER_WINDOW) {
+    if (count > config.maxPerWindow) {
       return {
         allowed: false,
         unavailable: false,
@@ -160,17 +214,31 @@ export async function rateLimitContact(
     return {
       allowed: true,
       unavailable: false,
-      remaining: MAX_PER_WINDOW - count,
+      remaining: config.maxPerWindow - count,
       resetAt,
       source: "redis",
     };
   } catch (error) {
-    console.error("[rate-limit] Redis unavailable", error);
+    console.error(
+      `[rate-limit] Redis unavailable for action "${action}"`,
+      error,
+    );
 
-    if (process.env.NODE_ENV === "production") {
+    if (
+      process.env.NODE_ENV === "production" &&
+      config.failClosedInProduction
+    ) {
       return { allowed: false, unavailable: true };
     }
 
-    return memoryRateLimit(key, now);
+    return memoryRateLimit(key, now, config);
   }
+}
+
+export function rateLimitContact(identifier: string): Promise<RateLimitResult> {
+  return rateLimit("contact", identifier);
+}
+
+export function rateLimitCv(identifier: string): Promise<RateLimitResult> {
+  return rateLimit("cv", identifier);
 }

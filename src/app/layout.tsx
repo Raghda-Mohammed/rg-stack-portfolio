@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import { headers } from "next/headers";
 import {
   Amiri,
   IBM_Plex_Sans_Arabic,
@@ -133,7 +134,16 @@ const PERSON_JSON_LD = {
   sameAs: [SITE.github, SITE.linkedin],
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  // Set by middleware.ts on every request; echoed onto the two inline
+  // <script> tags below so the CSP in middleware.ts can allow-list them by
+  // nonce instead of falling back to 'unsafe-inline'.
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+
   return (
     <html
       lang="en"
@@ -142,8 +152,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       className={`${inter.variable} ${newsreader.variable} ${jetbrains.variable} ${plexArabic.variable} ${amiri.variable}`}
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: BOOTSTRAP }} />
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: BOOTSTRAP }} />
         <script
+          nonce={nonce}
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSON_LD) }}
         />

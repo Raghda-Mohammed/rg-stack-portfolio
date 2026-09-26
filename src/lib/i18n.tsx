@@ -1,6 +1,14 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useSyncExternalStore, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 import { ar } from "@/content/ar";
 import { en } from "@/content/en";
 import type { Dictionary, Locale } from "@/content/types";
@@ -41,7 +49,20 @@ function subscribeToLocale(callback: () => void): () => void {
 }
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const locale = useSyncExternalStore<Locale>(subscribeToLocale, getStoredLocale, () => "en");
+  const locale = useSyncExternalStore<Locale>(
+    subscribeToLocale,
+    getStoredLocale,
+    () => "en",
+  );
+
+  // The inline bootstrap script in layout.tsx sets <html lang/dir> once from
+  // localStorage before hydration (avoiding a flash of the wrong direction).
+  // This effect keeps them in sync afterwards, when the user switches
+  // language at runtime rather than reloading the page.
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
+  }, [locale]);
 
   const setLocale = useCallback((next: Locale) => {
     try {

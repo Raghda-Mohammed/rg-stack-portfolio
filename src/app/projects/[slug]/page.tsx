@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { CaseStudy } from "@/components/case-study";
 import { en } from "@/content/en";
@@ -40,6 +41,7 @@ export default async function ProjectPage({ params }: Params) {
   const { slug } = await params;
   const meta = getProject(slug);
   const copy = en.projects[slug];
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
 
   if (!meta || !copy) notFound();
 
@@ -58,7 +60,11 @@ export default async function ProjectPage({ params }: Params) {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        nonce={nonce}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <CaseStudy slug={slug} />
     </>
   );

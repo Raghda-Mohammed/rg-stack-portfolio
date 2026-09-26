@@ -2,12 +2,39 @@
 
 import { useId, useRef, useState, type FormEvent } from "react";
 import { useI18n } from "@/lib/i18n";
+import {
+  getContactFieldErrors,
+  type ContactFieldErrorCode,
+} from "@/lib/validation/contact";
 import { AlertIcon, ArrowRight, CheckIcon } from "./ui/icons";
 import { buttonClass } from "./ui/primitives";
 
 type Errors = Partial<Record<"name" | "email" | "message" | "form", string>>;
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+/**
+ * Maps a Zod error code (from the shared `getContactFieldErrors`) to the
+ * localized copy string for that field. Falls back to the field's generic
+ * "required" message for codes that don't have a dedicated translation
+ * (e.g. "too_long", which in practice a user is unlikely to hit while
+ * typing since they'd see the character count grow long before submitting).
+ */
+function localizeFieldError(
+  field: "name" | "email" | "message",
+  code: ContactFieldErrorCode,
+  copy: ReturnType<typeof useI18n>["t"]["contact"]["form"]["errors"],
+): string {
+  if (field === "email") {
+    return code === "invalid_format" || code === "too_long"
+      ? copy.emailFormat
+      : copy.email;
+  }
+  if (field === "message") {
+    return code === "too_short" || code === "too_long"
+      ? copy.messageShort
+      : copy.message;
+  }
+  return copy.name;
+}
 
 export function ContactForm() {
   const { t, locale } = useI18n();
@@ -15,18 +42,25 @@ export function ContactForm() {
   const baseId = useId();
   const formRef = useRef<HTMLFormElement>(null);
 
-  const [values, setValues] = useState({ name: "", email: "", message: "", company: "" });
+  const [values, setValues] = useState({
+    name: "",
+    email: "",
+    message: "",
+    company: "",
+  });
   const [errors, setErrors] = useState<Errors>({});
-  const [status, setStatus] = useState<"idle" | "submitting" | "success">("idle");
+  const [status, setStatus] = useState<"idle" | "submitting" | "success">(
+    "idle",
+  );
   const [validateLive, setValidateLive] = useState(false);
 
   const validate = (next = values): Errors => {
+    const fieldErrors = getContactFieldErrors(next);
     const found: Errors = {};
-    if (!next.name.trim()) found.name = copy.errors.name;
-    if (!next.email.trim()) found.email = copy.errors.email;
-    else if (!EMAIL_PATTERN.test(next.email.trim())) found.email = copy.errors.emailFormat;
-    if (!next.message.trim()) found.message = copy.errors.message;
-    else if (next.message.trim().length < 20) found.message = copy.errors.messageShort;
+    for (const field of ["name", "email", "message"] as const) {
+      const code = fieldErrors[field];
+      if (code) found[field] = localizeFieldError(field, code, copy.errors);
+    }
     return found;
   };
 
@@ -43,8 +77,15 @@ export function ContactForm() {
     setErrors(found);
 
     if (Object.keys(found).length > 0) {
-      const firstField = (["name", "email", "message"] as const).find((field) => found[field]);
-      if (firstField) formRef.current?.querySelector<HTMLElement>(`#${CSS.escape(`${baseId}-${firstField}`)}`)?.focus();
+      const firstField = (["name", "email", "message"] as const).find(
+        (field) => found[field],
+      );
+      if (firstField)
+        formRef.current
+          ?.querySelector<HTMLElement>(
+            `#${CSS.escape(`${baseId}-${firstField}`)}`,
+          )
+          ?.focus();
       return;
     }
 
@@ -87,8 +128,14 @@ export function ContactForm() {
           <CheckIcon className="h-5 w-5" />
         </span>
         <h3 className="t-heading-l mt-6 font-display">{copy.successTitle}</h3>
-        <p className="t-body-m mt-3 max-w-[42ch] text-muted">{copy.successBody}</p>
-        <button type="button" onClick={() => setStatus("idle")} className={buttonClass("secondary", "md", "mt-8")}>
+        <p className="t-body-m mt-3 max-w-[42ch] text-muted">
+          {copy.successBody}
+        </p>
+        <button
+          type="button"
+          onClick={() => setStatus("idle")}
+          className={buttonClass("secondary", "md", "mt-8")}
+        >
           {copy.sendAnother}
           <ArrowRight className="arrow-shift h-4 w-4 rtl:-scale-x-100" />
         </button>
@@ -108,7 +155,10 @@ export function ContactForm() {
 
       <div className="mt-7 grid grid-cols-1 gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor={`${baseId}-name`} className="t-label flex items-center gap-2 text-muted">
+          <label
+            htmlFor={`${baseId}-name`}
+            className="t-label flex items-center gap-2 text-muted"
+          >
             {copy.name}
             <span className="text-accent" aria-hidden>
               *
@@ -129,7 +179,11 @@ export function ContactForm() {
             className={fieldClass(Boolean(errors.name))}
           />
           {errors.name ? (
-            <p id={`${baseId}-name-error`} role="alert" className="t-caption mt-2 flex items-center gap-1.5 text-accent">
+            <p
+              id={`${baseId}-name-error`}
+              role="alert"
+              className="t-caption mt-2 flex items-center gap-1.5 text-accent"
+            >
               <AlertIcon className="h-3.5 w-3.5" />
               {errors.name}
             </p>
@@ -137,7 +191,10 @@ export function ContactForm() {
         </div>
 
         <div>
-          <label htmlFor={`${baseId}-email`} className="t-label flex items-center gap-2 text-muted">
+          <label
+            htmlFor={`${baseId}-email`}
+            className="t-label flex items-center gap-2 text-muted"
+          >
             {copy.email}
             <span className="text-accent" aria-hidden>
               *
@@ -154,12 +211,18 @@ export function ContactForm() {
             onChange={(event) => update("email", event.target.value)}
             onBlur={() => validateLive && setErrors(validate())}
             aria-invalid={Boolean(errors.email)}
-            aria-describedby={errors.email ? `${baseId}-email-error` : undefined}
+            aria-describedby={
+              errors.email ? `${baseId}-email-error` : undefined
+            }
             placeholder={copy.emailPlaceholder}
             className={`${fieldClass(Boolean(errors.email))} text-start`}
           />
           {errors.email ? (
-            <p id={`${baseId}-email-error`} role="alert" className="t-caption mt-2 flex items-center gap-1.5 text-accent">
+            <p
+              id={`${baseId}-email-error`}
+              role="alert"
+              className="t-caption mt-2 flex items-center gap-1.5 text-accent"
+            >
               <AlertIcon className="h-3.5 w-3.5" />
               {errors.email}
             </p>
@@ -168,7 +231,10 @@ export function ContactForm() {
       </div>
 
       <div className="mt-5">
-        <label htmlFor={`${baseId}-message`} className="t-label flex items-center gap-2 text-muted">
+        <label
+          htmlFor={`${baseId}-message`}
+          className="t-label flex items-center gap-2 text-muted"
+        >
           {copy.message}
           <span className="text-accent" aria-hidden>
             *
@@ -183,12 +249,18 @@ export function ContactForm() {
           onChange={(event) => update("message", event.target.value)}
           onBlur={() => validateLive && setErrors(validate())}
           aria-invalid={Boolean(errors.message)}
-          aria-describedby={errors.message ? `${baseId}-message-error` : undefined}
+          aria-describedby={
+            errors.message ? `${baseId}-message-error` : undefined
+          }
           placeholder={copy.messagePlaceholder}
           className={`${fieldClass(Boolean(errors.message))} resize-y`}
         />
         {errors.message ? (
-          <p id={`${baseId}-message-error`} role="alert" className="t-caption mt-2 flex items-center gap-1.5 text-accent">
+          <p
+            id={`${baseId}-message-error`}
+            role="alert"
+            className="t-caption mt-2 flex items-center gap-1.5 text-accent"
+          >
             <AlertIcon className="h-3.5 w-3.5" />
             {errors.message}
           </p>
@@ -210,7 +282,11 @@ export function ContactForm() {
       </div>
 
       <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <button type="submit" disabled={status === "submitting"} className={buttonClass("primary", "md", "disabled:opacity-70")}>
+        <button
+          type="submit"
+          disabled={status === "submitting"}
+          className={buttonClass("primary", "md", "disabled:opacity-70")}
+        >
           {status === "submitting" ? copy.sending : copy.submit}
           <ArrowRight className="arrow-shift h-4 w-4 rtl:-scale-x-100" />
         </button>
@@ -222,7 +298,10 @@ export function ContactForm() {
       </p>
 
       {errors.form ? (
-        <p role="alert" className="t-body-s mt-5 flex items-center gap-2 rounded-sm border border-accent bg-accent-soft px-4 py-3 text-accent">
+        <p
+          role="alert"
+          className="t-body-s mt-5 flex items-center gap-2 rounded-sm border border-accent bg-accent-soft px-4 py-3 text-accent"
+        >
           <AlertIcon className="h-4 w-4 shrink-0" />
           {errors.form}
         </p>

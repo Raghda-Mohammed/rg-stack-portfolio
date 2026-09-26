@@ -2,10 +2,9 @@ export const SITE = {
   name: "RG Stack",
   shortName: "RG",
   role: "Full-Stack Developer",
-  // TODO: replace with the project's real production URL once known
-  // (either the Vercel-assigned domain, e.g. https://rg-stack-portfolio.vercel.app,
-  // or a custom domain). This value feeds metadataBase, canonical links and
-  // Open Graph tags, so an incorrect one leads to broken share previews.
+  // Feeds metadataBase, canonical links and Open Graph tags — keep this in
+  // sync with whatever domain the site is actually deployed to, or share
+  // previews (Open Graph/Twitter cards) will point at the wrong URL.
   url: "https://rgstack.dev",
   email: "raghda191987@gmail.com",
   github: "https://github.com/Raghda-Mohammed",

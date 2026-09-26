@@ -1,23 +1,14 @@
 import { db } from "@/db";
 import { contactMessages } from "@/db/schema";
 import {
+  clientIdentifierFromRequest,
   hashClientIdentifier,
   rateLimitContact,
 } from "@/lib/security/rate-limit";
+import { MAX_BODY_BYTES, contactPayloadSchema, getContactFieldErrors } from "@/lib/validation/contact";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-const MAX_BODY_BYTES = 32 * 1024;
-
-function clientIdentifier(request: Request): string {
-  // Vercel supplies x-forwarded-for from the edge/proxy layer. Hash the value
-  // before using it as a Redis key so raw IP addresses are never persisted there.
-  const forwarded = request.headers.get("x-forwarded-for");
-  const realIp = request.headers.get("x-real-ip");
-  return forwarded?.split(",")[0]?.trim() || realIp?.trim() || "local";
-}
 
 export async function POST(request: Request) {
   const contentLength = request.headers.get("content-length");
@@ -50,17 +41,12 @@ export async function POST(request: Request) {
     return Response.json({ ok: true }, { status: 202 });
   }
 
-  const name = typeof body.name === "string" ? body.name.trim() : "";
-  const email = typeof body.email === "string" ? body.email.trim() : "";
-  const message = typeof body.message === "string" ? body.message.trim() : "";
-  const locale = body.locale === "ar" ? "ar" : "en";
+  const name = typeof body.name === "string" ? body.name : "";
+  const email = typeof body.email === "string" ? body.email : "";
+  const message = typeof body.message === "string" ? body.message : "";
+  const locale = contactPayloadSchema.shape.locale.parse(body.locale);
 
-  const fieldErrors: Record<string, string> = {};
-  if (name.length < 2 || name.length > 120) fieldErrors.name = "invalid_name";
-  if (!EMAIL_PATTERN.test(email) || email.length > 200)
-    fieldErrors.email = "invalid_email";
-  if (message.length < 20 || message.length > 4000)
-    fieldErrors.message = "invalid_message";
+  const fieldErrors = getContactFieldErrors({ name, email, message });
 
   if (Object.keys(fieldErrors).length > 0) {
     return Response.json(
@@ -69,7 +55,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const rateLimit = await rateLimitContact(clientIdentifier(request));
+  const clientIdentifier = clientIdentifierFromRequest(request);
+  const rateLimit = await rateLimitContact(clientIdentifier);
 
   if (rateLimit.unavailable) {
     return Response.json(
@@ -102,14 +89,20 @@ export async function POST(request: Request) {
   try {
     const [row] = await db
       .insert(contactMessages)
-      .values({ name, email, message, locale, source: "portfolio" })
+      .values({
+        name: name.trim(),
+        email: email.trim(),
+        message: message.trim(),
+        locale,
+        source: "portfolio",
+      })
       .returning({ id: contactMessages.id });
 
     return Response.json({ ok: true, id: row?.id ?? null }, { status: 201 });
   } catch (error) {
     console.error("[contact] Failed to store contact message", {
       error,
-      client: hashClientIdentifier(clientIdentifier(request)),
+      client: hashClientIdentifier(clientIdentifier),
     });
 
     return Response.json(
