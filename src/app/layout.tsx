@@ -1,6 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import { Amiri, IBM_Plex_Sans_Arabic, Inter, JetBrains_Mono, Newsreader } from "next/font/google";
+import {
+  Amiri,
+  IBM_Plex_Sans_Arabic,
+  Inter,
+  JetBrains_Mono,
+  Newsreader,
+} from "next/font/google";
 import "./globals.css";
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
@@ -85,7 +91,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "RG Stack — Full-Stack Developer",
     description: DESCRIPTION,
-    creator: "@rgstack",
   },
   robots: {
     index: true,
@@ -116,8 +121,16 @@ const PERSON_JSON_LD = {
   description: DESCRIPTION,
   address: { "@type": "PostalAddress", addressCountry: "EG" },
   knowsLanguage: ["ar", "en"],
-  knowsAbout: ["Next.js", "React", "TypeScript", "Node.js", "PostgreSQL", "Drizzle ORM", "Tailwind CSS"],
-  sameAs: [SITE.github, SITE.linkedin, SITE.x],
+  knowsAbout: [
+    "Next.js",
+    "React",
+    "TypeScript",
+    "Node.js",
+    "PostgreSQL",
+    "Drizzle ORM",
+    "Tailwind CSS",
+  ],
+  sameAs: [SITE.github, SITE.linkedin],
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -130,7 +143,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: BOOTSTRAP }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSON_LD) }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(PERSON_JSON_LD) }}
+        />
         {/* Reveal animations start hidden; without JavaScript everything stays visible. */}
         <noscript>
           <style>{`[style*="opacity:0"],[style*="opacity: 0"]{opacity:1!important;transform:none!important}`}</style>

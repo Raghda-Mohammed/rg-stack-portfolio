@@ -12,22 +12,27 @@ const CONTENT_WIDTH = PAGE_WIDTH - MARGIN * 2;
 type TextOptions = { size?: number; bold?: boolean; gray?: number; x?: number };
 
 function escapeText(value: string): string {
-  return value
-    .replace(/\\/g, "\\\\")
-    .replace(/\(/g, "\\(")
-    .replace(/\)/g, "\\)")
-    // The writer is Latin-1 only; normalise typographic characters.
-    .replace(/[\u2018\u2019]/g, "'")
-    .replace(/[\u201C\u201D]/g, '"')
-    .replace(/[\u2013\u2014]/g, "-")
-    .replace(/[^\x20-\x7E]/g, "");
+  return (
+    value
+      .replace(/\\/g, "\\\\")
+      .replace(/\(/g, "\\(")
+      .replace(/\)/g, "\\)")
+      // The writer is Latin-1 only; normalise typographic characters.
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/[\u201C\u201D]/g, '"')
+      .replace(/[\u2013\u2014]/g, "-")
+      .replace(/[^\x20-\x7E]/g, "")
+  );
 }
 
 class PdfPage {
   private ops: string[] = [];
   cursor = 76;
 
-  text(value: string, { size = 9.5, bold = false, gray = 0.12, x = MARGIN }: TextOptions = {}) {
+  text(
+    value: string,
+    { size = 9.5, bold = false, gray = 0.12, x = MARGIN }: TextOptions = {},
+  ) {
     this.ops.push(
       `BT /${bold ? "F2" : "F1"} ${size} Tf ${gray} g 1 0 0 1 ${x.toFixed(2)} ${(PAGE_HEIGHT - this.cursor).toFixed(2)} Tm (${escapeText(value)}) Tj ET`,
     );
@@ -104,10 +109,10 @@ export function buildCvPdf(): string {
 
   page.line("RG STACK", { size: 23, bold: true, gray: 0.08 }, 20);
   page.line("Full-Stack Developer", { size: 11.5, gray: 0.35 }, 16);
-  page.line("hello@rgstack.dev   github.com/rgstack   linkedin.com/in/rgstack   Egypt (remote, UTC+2)", {
-    size: 8.5,
-    gray: 0.45,
-  });
+  page.line(
+    "raghda191987@gmail.com   github.com/Raghda-Mohammed   linkedin.com/in/raghda-mohammed-2577a6248   Egypt (remote, UTC+2)",
+    { size: 8.5, gray: 0.45 },
+  );
   page.space(2);
   page.rule();
 
@@ -127,38 +132,71 @@ export function buildCvPdf(): string {
   ]);
 
   page.heading("SELECTED WORK");
-  page.line("Tel El-Kebir Guide - Full-stack local directory platform (Next.js, TypeScript, PostgreSQL)", {
-    size: 9.5,
-    bold: true,
-    gray: 0.1,
-  });
+  page.line(
+    "Tel El-Kebir Guide - Full-stack local directory platform (Next.js, TypeScript, PostgreSQL)",
+    {
+      size: 9.5,
+      bold: true,
+      gray: 0.1,
+    },
+  );
   page.paragraph(
     [
       "Directory of local businesses, doctors, pharmacies and services with Arabic/English interfaces.",
     ],
     { size: 9.5, gray: 0.35 },
   );
-  page.bullet("Session authentication with hashed credentials and role-based access (visitor, owner, admin).");
-  page.bullet("Owner dashboard for listings, hours, photos and offers; admin moderation queue for published content.");
-  page.bullet("Reviews, scheduled advertisements, per-listing analytics and in-app notifications.");
-  page.bullet("PostgreSQL schema in Drizzle ORM with versioned migrations and types shared with the API layer.");
+  page.bullet(
+    "Session authentication with hashed credentials and role-based access (visitor, owner, admin).",
+  );
+  page.bullet(
+    "Owner dashboard for listings, hours, photos and offers; admin moderation queue for published content.",
+  );
+  page.bullet(
+    "Reviews, scheduled advertisements, per-listing analytics and in-app notifications.",
+  );
+  page.bullet(
+    "PostgreSQL schema in Drizzle ORM with versioned migrations and types shared with the API layer.",
+  );
   page.space(6);
 
-  page.line("Arabic UI Kit - RTL-first React component system", { size: 9.5, bold: true, gray: 0.1 });
-  page.bullet("Logical CSS properties instead of mirrored stylesheets; bidi-safe handling of mixed Arabic/Latin text.");
-  page.bullet("Direction-aware type scale with separate Arabic line-height and tracking values.");
+  page.line("Arabic UI Kit - RTL-first React component system", {
+    size: 9.5,
+    bold: true,
+    gray: 0.1,
+  });
+  page.bullet(
+    "Logical CSS properties instead of mirrored stylesheets; bidi-safe handling of mixed Arabic/Latin text.",
+  );
+  page.bullet(
+    "Direction-aware type scale with separate Arabic line-height and tracking values.",
+  );
   page.space(6);
 
-  page.line("Portfolio Template - Content-driven Next.js portfolio starter", { size: 9.5, bold: true, gray: 0.1 });
-  page.bullet("Typed content module drives every section; light and dark themes from one token set.");
-  page.bullet("Built-in metadata, Open Graph images, sitemap and robots configuration.");
+  page.line("Portfolio Template - Content-driven Next.js portfolio starter", {
+    size: 9.5,
+    bold: true,
+    gray: 0.1,
+  });
+  page.bullet(
+    "Typed content module drives every section; light and dark themes from one token set.",
+  );
+  page.bullet(
+    "Built-in metadata, Open Graph images, sitemap and robots configuration.",
+  );
 
   page.heading("EDUCATION");
   page.line("B.Commerce (Accounting)", { size: 9.5, bold: true, gray: 0.1 });
-  page.line("Foundation in systems, rules and edge-case thinking, applied to software since.", { size: 9.5, gray: 0.35 });
+  page.line(
+    "Foundation in systems, rules and edge-case thinking, applied to software since.",
+    { size: 9.5, gray: 0.35 },
+  );
 
   page.heading("LANGUAGES");
-  page.line("Arabic - native.   English - professional working proficiency.", { size: 9.5, gray: 0.2 });
+  page.line("Arabic - native.   English - professional working proficiency.", {
+    size: 9.5,
+    gray: 0.2,
+  });
 
   return assemble(page.build());
 }

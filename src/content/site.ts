@@ -2,11 +2,14 @@ export const SITE = {
   name: "RG Stack",
   shortName: "RG",
   role: "Full-Stack Developer",
+  // TODO: replace with the project's real production URL once known
+  // (either the Vercel-assigned domain, e.g. https://rg-stack-portfolio.vercel.app,
+  // or a custom domain). This value feeds metadataBase, canonical links and
+  // Open Graph tags, so an incorrect one leads to broken share previews.
   url: "https://rgstack.dev",
-  email: "hello@rgstack.dev",
-  github: "https://github.com/rgstack",
-  linkedin: "https://www.linkedin.com/in/rgstack",
-  x: "https://x.com/rgstack",
+  email: "raghda191987@gmail.com",
+  github: "https://github.com/Raghda-Mohammed",
+  linkedin: "https://www.linkedin.com/in/raghda-mohammed-2577a6248/",
   locationEn: "Egypt",
   locationAr: "مصر",
 } as const;
@@ -62,14 +65,31 @@ export const HERO_STACK: TechKey[] = [
   "tailwind",
 ];
 
-export const SKILL_CATEGORIES: { id: string; index: string; items: TechKey[] }[] = [
-  { id: "frontend", index: "01", items: ["nextjs", "react", "typescript", "tailwind", "bootstrap", "framer"] },
+export const SKILL_CATEGORIES: {
+  id: string;
+  index: string;
+  items: TechKey[];
+}[] = [
+  {
+    id: "frontend",
+    index: "01",
+    items: ["nextjs", "react", "typescript", "tailwind", "bootstrap", "framer"],
+  },
   { id: "backend", index: "02", items: ["node", "express", "nestjs", "rest"] },
   { id: "database", index: "03", items: ["postgres", "drizzle", "prisma"] },
-  { id: "tools", index: "04", items: ["git", "github", "docker", "vercel", "vscode"] },
+  {
+    id: "tools",
+    index: "04",
+    items: ["git", "github", "docker", "vercel", "vscode"],
+  },
 ];
 
-export type SketchVariant = "directory" | "template" | "delivery" | "dashboard" | "uikit";
+export type SketchVariant =
+  | "directory"
+  | "template"
+  | "delivery"
+  | "dashboard"
+  | "uikit";
 
 export type ProjectMeta = {
   slug: string;
