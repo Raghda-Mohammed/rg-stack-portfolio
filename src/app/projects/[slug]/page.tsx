@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { CaseStudy } from "@/components/case-study";
-import { en } from "@/content/en";
-import { PROJECTS, SITE, TECH_LABEL, getProject } from "@/content/site";
+import { PROJECTS, SITE, TECH_LABEL } from "@/content/site";
+import { getPortfolioProject, getPortfolioProjects } from "@/lib/projects";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -13,59 +13,20 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const { slug } = await params;
-  const copy = en.projects[slug];
-  if (!copy) return { title: "Project not found" };
-
-  const title = `${copy.title} — ${copy.category} | ${SITE.name}`;
+  const project = await getPortfolioProject(slug);
+  if (!project) return { title: "Project not found" };
+  const title = `${project.en.title} — ${project.en.category} | ${SITE.name}`;
   const url = `${SITE.url}/projects/${slug}`;
-
-  return {
-    title: `${copy.title} — Case Study`,
-    description: copy.summary,
-    alternates: { canonical: url },
-    openGraph: {
-      title,
-      description: copy.summary,
-      url,
-      type: "article",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description: copy.summary,
-    },
-  };
+  return { title: `${project.en.title} — Case Study`, description: project.en.summary, alternates: { canonical: url }, openGraph: { title, description: project.en.summary, url, type: "article" }, twitter: { card: "summary_large_image", title, description: project.en.summary } };
 }
 
 export default async function ProjectPage({ params }: Params) {
   const { slug } = await params;
-  const meta = getProject(slug);
-  const copy = en.projects[slug];
+  const [project, projects] = await Promise.all([getPortfolioProject(slug), getPortfolioProjects()]);
   const nonce = (await headers()).get("x-nonce") ?? undefined;
-
-  if (!meta || !copy) notFound();
-
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    name: copy.title,
-    headline: `${copy.title} — ${copy.category}`,
-    description: copy.summary,
-    url: `${SITE.url}/projects/${slug}`,
-    dateCreated: meta.year,
-    inLanguage: ["en", "ar"],
-    keywords: meta.tech.map((tech) => TECH_LABEL[tech]).join(", "),
-    author: { "@type": "Person", name: SITE.name, url: SITE.url },
-  };
-
-  return (
-    <>
-      <script
-        nonce={nonce}
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <CaseStudy slug={slug} />
-    </>
-  );
+  if (!project) notFound();
+  const index = projects.findIndex((item) => item.id === project.id);
+  const nextProject = projects[(index + 1) % projects.length];
+  const jsonLd = { "@context": "https://schema.org", "@type": "CreativeWork", name: project.en.title, headline: `${project.en.title} — ${project.en.category}`, description: project.en.summary, url: `${SITE.url}/projects/${slug}`, dateCreated: project.year, inLanguage: ["en", "ar"], keywords: project.tech.map((tech) => TECH_LABEL[tech]).join(", "), image: project.imageUrl, author: { "@type": "Person", name: SITE.name, url: SITE.url } };
+  return <><script nonce={nonce} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /><CaseStudy project={project} nextProject={nextProject?.id === project.id ? undefined : nextProject} /></>;
 }

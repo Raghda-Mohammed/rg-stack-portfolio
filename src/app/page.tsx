@@ -5,6 +5,7 @@ import { Hero } from "@/components/hero";
 import { Projects } from "@/components/projects";
 import { Skills } from "@/components/skills";
 import { SITE } from "@/content/site";
+import { getPortfolioProjects } from "@/lib/projects";
 
 const WEBSITE_JSON_LD = {
   "@context": "https://schema.org",
@@ -17,19 +18,13 @@ const WEBSITE_JSON_LD = {
 
 export default async function HomePage() {
   const nonce = (await headers()).get("x-nonce") ?? undefined;
-
-  return (
-    <>
-      <script
-        nonce={nonce}
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
-      />
-      <Hero />
-      <About />
-      <Projects />
-      <Skills />
-      <Contact />
-    </>
-  );
+  const projects = await getPortfolioProjects();
+  return <>
+    <script nonce={nonce} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }} />
+    <Hero />
+    <About />
+    <Projects projects={projects} />
+    <Skills />
+    <Contact />
+  </>;
 }
