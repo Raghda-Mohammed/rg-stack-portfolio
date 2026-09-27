@@ -138,7 +138,7 @@ export function ProductPreview() {
       </div>
 
       {/* Mobile frame */}
-      <div className="absolute -bottom-10 -start-10 hidden w-[7.5rem] rounded-[1.25rem] border border-line-strong bg-surface p-1.5 shadow-float sm:block lg:-start-12 lg:w-[8.25rem]">
+      <div className="absolute -bottom-10 -start-10 hidden w-30 rounded-[1.25rem] border border-line-strong bg-surface p-1.5 shadow-float sm:block lg:-start-12 lg:w-[8.25rem]">
         <div className="overflow-hidden rounded-[0.9rem] border border-line bg-bg">
           <div className="flex items-center justify-between px-2.5 py-1.5">
             <span className="text-[0.4375rem] text-muted tabular-nums keep-latin">9:41</span>

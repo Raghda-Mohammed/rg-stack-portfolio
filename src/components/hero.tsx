@@ -90,7 +90,7 @@ export function Hero() {
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 40vw"
-                  className="object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                  className="object-cover transition-transform duration-900 ease-out group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                 />
                 <span aria-hidden className="absolute inset-0 bg-accent/5 mix-blend-multiply dark:bg-transparent" />
               </div>
