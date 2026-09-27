@@ -81,12 +81,12 @@ export function Navbar() {
     <header
       className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
         scrolled || open
-          ? "border-line bg-bg/90 backdrop-blur-md supports-[backdrop-filter]:bg-bg/75"
+          ? "border-line bg-bg/90 backdrop-blur-md supports-backdrop-filter:bg-bg/75"
           : "border-transparent bg-transparent"
       }`}
     >
       <div className="container-editorial">
-        <div className="flex h-16 items-center justify-between gap-6 md:h-[4.5rem]">
+        <div className="flex h-16 items-center justify-between gap-6 md:h-18">
           <Link
             href="/"
             onClick={close}
