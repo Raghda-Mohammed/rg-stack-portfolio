@@ -1,6 +1,6 @@
 export const SITE = {
-  name: "RG Stack",
-  shortName: "RG",
+  name: "RD Stack",
+  shortName: "RD",
   role: "Full-Stack Developer",
   // Feeds metadataBase, canonical links and Open Graph tags — keep this in
   // sync with whatever domain the site is actually deployed to, or share

@@ -24,7 +24,7 @@ export const ar: Dictionary = {
   language: { label: "اللغة", en: "EN", ar: "AR" },
   hero: {
     eyebrow: "مرحبًا، أنا",
-    name: "RG Stack",
+    name: "RD Stack",
     role: "مطوّر ويب متكامل",
     description:
       "أبني تطبيقات ويب حديثة وقابلة للتوسّع، من الفكرة الأولى حتى النشر — بتصميم مدروس وكود نظيف يسهل تطويره لاحقًا.",
@@ -455,7 +455,7 @@ export const ar: Dictionary = {
   },
   footer: {
     tagline: "مطوّر ويب متكامل يبني تطبيقات ويب حديثة.",
-    copyright: "© 2026 RG Stack. جميع الحقوق محفوظة.",
+    copyright: "© 2026 RD Stack. جميع الحقوق محفوظة.",
     social: "حسابات أخرى",
     builtWith: "مبني بـ Next.js وTypeScript وPostgreSQL وDrizzle ORM.",
     backToTop: "العودة للأعلى",

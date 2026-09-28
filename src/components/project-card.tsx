@@ -30,27 +30,24 @@ export function ProjectCard({ project }: { project: PortfolioProject }) {
           </div>
 
           {project.mobileImageUrl ? (
-            <>
-              <div className="absolute -bottom-[70%] end-4 z-10 w-[24%] max-w-[120px] min-w-[72px]">
-                <div className="relative aspect-[9/19.5] overflow-hidden rounded-2xl border-4 border-bg bg-bg shadow-2xl ring-1 ring-black/10">
-                  <Image
-                    src={project.mobileImageUrl}
-                    alt={`${copy.title} — Mobile`}
-                    fill
-                    sizes="120px"
-                    className="object-cover"
-                    loading="lazy"
-                    unoptimized
-                  />
-                </div>
+            <div className="absolute -bottom-[30%] end-4 z-10 w-[24%] max-w-[120px] min-w-[72px]">
+              {" "}
+              <div className="relative aspect-[9/19.5] overflow-hidden rounded-2xl border-4 border-bg bg-bg shadow-2xl ring-1 ring-black/10">
+                <Image
+                  src={project.mobileImageUrl}
+                  alt={`${copy.title} — Mobile`}
+                  fill
+                  sizes="120px"
+                  className="object-cover"
+                  loading="lazy"
+                  unoptimized
+                />
               </div>
-
-              <div className="h-[clamp(8rem,18vw,11rem)]" aria-hidden="true" />
-            </>
+            </div>
           ) : null}
         </div>
 
-        <div className="mt-6 flex items-baseline gap-3">
+        <div className="mt-28 flex items-baseline gap-3">
           <span className="t-label text-muted">{project.index}</span>
 
           <span className="t-caption text-muted">{copy.category}</span>

@@ -24,9 +24,9 @@ function useActiveSection(enabled: boolean) {
 
   useEffect(() => {
     if (!enabled) return;
-    const targets = NAV_ITEMS.map((item) => document.getElementById(item.id)).filter(
-      (node): node is HTMLElement => Boolean(node),
-    );
+    const targets = NAV_ITEMS.map((item) =>
+      document.getElementById(item.id),
+    ).filter((node): node is HTMLElement => Boolean(node));
     if (targets.length === 0) return;
 
     const observer = new IntersectionObserver(
@@ -79,10 +79,10 @@ export function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 border-b transition-colors duration-300 ${
+      className={`fixed inset-x-0 bottom-0 z-50 border-t transition-colors duration-300 md:sticky md:top-0 md:bottom-auto md:border-t-0 md:border-b ${
         scrolled || open
           ? "border-line bg-bg/90 backdrop-blur-md supports-backdrop-filter:bg-bg/75"
-          : "border-transparent bg-transparent"
+          : "border-transparent bg-bg/90 backdrop-blur-md supports-backdrop-filter:bg-bg/75"
       }`}
     >
       <div className="container-editorial">
@@ -91,7 +91,7 @@ export function Navbar() {
             href="/"
             onClick={close}
             className="group flex items-center gap-3 text-ink"
-            aria-label={`RG Stack — ${t.hero.role}`}
+            aria-label={`RD Stack — ${t.hero.role}`}
           >
             <Monogram className="h-9 w-9 transition-opacity duration-200 group-hover:opacity-80" />
             <span className="hidden sm:block">
@@ -129,7 +129,10 @@ export function Navbar() {
           <div className="flex items-center gap-2 md:gap-3">
             <LanguageSwitcher className="hidden sm:inline-flex" />
             <ThemeToggle />
-            <Link href="/#contact" className={buttonClass("primary", "sm", "hidden md:inline-flex")}>
+            <Link
+              href="/#contact"
+              className={buttonClass("primary", "sm", "hidden md:inline-flex")}
+            >
               {t.nav.cta}
               <ArrowRight className="arrow-shift h-3.5 w-3.5 rtl:-scale-x-100" />
             </Link>
@@ -158,25 +161,43 @@ export function Navbar() {
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
             className="border-t border-line bg-bg lg:hidden"
           >
-            <nav aria-label={t.nav.menuLabel} className="container-editorial py-6">
+            <nav
+              aria-label={t.nav.menuLabel}
+              className="container-editorial py-6"
+            >
               <ul className="flex flex-col">
                 {NAV_ITEMS.map((item, index) => (
-                  <li key={item.key} className={index === 0 ? "" : "border-t border-line"}>
+                  <li
+                    key={item.key}
+                    className={index === 0 ? "" : "border-t border-line"}
+                  >
                     <Link
                       href={item.href}
                       onClick={close}
                       aria-current={active === item.id ? "true" : undefined}
                       className="flex items-center justify-between py-4 text-ink"
                     >
-                      <span className="t-heading-l font-display">{t.nav[item.key]}</span>
-                      <span className="t-label text-muted">{String(index + 1).padStart(2, "0")}</span>
+                      <span className="t-heading-l font-display">
+                        {t.nav[item.key]}
+                      </span>
+                      <span className="t-label text-muted">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
                     </Link>
                   </li>
                 ))}
               </ul>
               <div className="mt-6 flex items-center justify-between gap-3">
                 <LanguageSwitcher className="sm:hidden" />
-                <Link href="/#contact" onClick={close} className={buttonClass("primary", "md", "flex-1 sm:flex-none")}>
+                <Link
+                  href="/#contact"
+                  onClick={close}
+                  className={buttonClass(
+                    "primary",
+                    "md",
+                    "flex-1 sm:flex-none",
+                  )}
+                >
                   {t.nav.cta}
                   <ArrowRight className="arrow-shift h-3.5 w-3.5 rtl:-scale-x-100" />
                 </Link>

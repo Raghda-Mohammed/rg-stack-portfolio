@@ -24,7 +24,7 @@ export const en: Dictionary = {
   language: { label: "Language", en: "EN", ar: "AR" },
   hero: {
     eyebrow: "Hi, I'm",
-    name: "RG Stack",
+    name: "RD Stack",
     role: "Full-Stack Developer",
     description:
       "I build modern, scalable web applications from concept to deployment — combining thoughtful design with clean, maintainable code.",
@@ -474,7 +474,7 @@ export const en: Dictionary = {
   },
   footer: {
     tagline: "Full-Stack Developer building modern web applications.",
-    copyright: "© 2026 RG Stack. All rights reserved.",
+    copyright: "© 2026 RD Stack. All rights reserved.",
     social: "Elsewhere",
     builtWith: "Built with Next.js, TypeScript, PostgreSQL and Drizzle ORM.",
     backToTop: "Back to top",
