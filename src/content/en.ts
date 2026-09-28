@@ -44,16 +44,13 @@ export const en: Dictionary = {
     heading: "Turning ideas into real web applications.",
     paragraphs: [
       "I'm a full-stack developer based in Egypt. I work across the entire stack — shaping the interface, modelling the data, writing the API and shipping the result — because the problems worth solving usually sit in the space between those layers.",
-      "My degree is a B.Commerce in Accounting, which is where I learned to think in systems, rules and edge cases before writing anything down. I moved into software to build the tools instead of filling them in, and I've been engineering web products since.",
       "In practice that means Next.js and TypeScript on the front end, Node.js services and REST APIs on the back end, and PostgreSQL with Drizzle ORM for data. I care about typed boundaries, validation that lives on the server, accessible interfaces, and migrations that are safe to run twice.",
       "I prefer a small stack I understand deeply over a large fashionable one, and I read source code when documentation runs out.",
     ],
     facts: [
       { label: "Based in", value: "Egypt · Remote" },
-      { label: "Education", value: "B.Commerce (Accounting)" },
       { label: "Focus", value: "Full-stack web development" },
       { label: "Languages", value: "Arabic (native) · English (professional)" },
-      { label: "Currently", value: "Building Tel El-Kebir Guide" },
       { label: "Open to", value: "Freelance & full-time roles" },
     ],
     imageAlt:
