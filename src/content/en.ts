@@ -99,6 +99,8 @@ export const en: Dictionary = {
       "A directory platform in production use, plus a set of smaller products and systems where I explored specific engineering problems.",
     featuredLabel: "Featured project",
     viewCaseStudy: "View Case Study",
+    liveDemo: "Live Demo",
+    github: "GitHub",
     otherLabel: "More projects",
     otherHeading: "Other things I've built.",
     previewCaption: "Interface preview — desktop and mobile layouts",
@@ -162,16 +164,51 @@ export const en: Dictionary = {
         },
       ],
       features: [
-        { title: "Authentication", description: "Sessions, hashed credentials and protected routes." },
-        { title: "Role-based access", description: "Visitor, owner and admin permissions enforced server-side." },
-        { title: "Admin dashboard", description: "Review queue for listings, reports and user content." },
-        { title: "Business management", description: "Owners maintain hours, contacts, photos and offers." },
-        { title: "Reviews", description: "One moderated, editable rating per user per business." },
-        { title: "Advertisements", description: "Scheduled placements with impression and click counters." },
-        { title: "Analytics", description: "Per-listing views and interactions aggregated in SQL." },
-        { title: "Notifications", description: "In-app alerts for approvals, replies and review activity." },
-        { title: "Multi-language", description: "Complete Arabic/English interface with true RTL layout." },
-        { title: "Responsive design", description: "One layout system from 320px handsets to wide desktops." },
+        {
+          title: "Authentication",
+          description: "Sessions, hashed credentials and protected routes.",
+        },
+        {
+          title: "Role-based access",
+          description:
+            "Visitor, owner and admin permissions enforced server-side.",
+        },
+        {
+          title: "Admin dashboard",
+          description: "Review queue for listings, reports and user content.",
+        },
+        {
+          title: "Business management",
+          description: "Owners maintain hours, contacts, photos and offers.",
+        },
+        {
+          title: "Reviews",
+          description: "One moderated, editable rating per user per business.",
+        },
+        {
+          title: "Advertisements",
+          description:
+            "Scheduled placements with impression and click counters.",
+        },
+        {
+          title: "Analytics",
+          description: "Per-listing views and interactions aggregated in SQL.",
+        },
+        {
+          title: "Notifications",
+          description:
+            "In-app alerts for approvals, replies and review activity.",
+        },
+        {
+          title: "Multi-language",
+          description:
+            "Complete Arabic/English interface with true RTL layout.",
+        },
+        {
+          title: "Responsive design",
+          description:
+            "One layout system from 320px handsets to wide desktops.",
+        },
       ],
       outcome:
         "The platform runs as a single deployable Next.js application against a managed PostgreSQL database. Listings are created and maintained by the businesses themselves and reviewed before publication, which keeps the data current without a full-time editor. Because the schema and the API share one set of types, most new features are a migration plus a page. It is the project I point to when I want to show how I structure full-stack work: typed end to end, validated on the server, and designed for the device most people actually use.",
@@ -179,7 +216,8 @@ export const en: Dictionary = {
     "portfolio-template": {
       title: "Portfolio Template",
       category: "Open Template",
-      summary: "A modern, customisable developer portfolio template driven entirely by a typed content file.",
+      summary:
+        "A modern, customisable developer portfolio template driven entirely by a typed content file.",
       status: "Template · open source",
       overview:
         "A portfolio starter for developers who want an editorial layout without rebuilding one. Content lives in a single typed configuration file, so a new portfolio is a content change rather than a component rewrite.",
@@ -188,15 +226,40 @@ export const en: Dictionary = {
       approach:
         "I separated content, tokens and components. A typed content module describes every section; components render from that contract and nothing else. Colour, spacing, radius and type scale come from CSS variables, so a theme change is a few tokens rather than a search-and-replace.",
       architecture: [
-        { label: "Frontend", value: "Next.js App Router, TypeScript, Tailwind CSS with CSS-variable tokens." },
-        { label: "Content", value: "A single typed content module validated at build time." },
-        { label: "Motion", value: "Framer Motion for reveals and hover states, disabled under prefers-reduced-motion." },
+        {
+          label: "Frontend",
+          value:
+            "Next.js App Router, TypeScript, Tailwind CSS with CSS-variable tokens.",
+        },
+        {
+          label: "Content",
+          value: "A single typed content module validated at build time.",
+        },
+        {
+          label: "Motion",
+          value:
+            "Framer Motion for reveals and hover states, disabled under prefers-reduced-motion.",
+        },
       ],
       features: [
-        { title: "Typed content", description: "One file defines every section of the site." },
-        { title: "Token theming", description: "Light and dark themes from the same variable set." },
-        { title: "Section presets", description: "Hero, work, skills and contact blocks ready to compose." },
-        { title: "SEO defaults", description: "Metadata, Open Graph images, sitemap and robots included." },
+        {
+          title: "Typed content",
+          description: "One file defines every section of the site.",
+        },
+        {
+          title: "Token theming",
+          description: "Light and dark themes from the same variable set.",
+        },
+        {
+          title: "Section presets",
+          description:
+            "Hero, work, skills and contact blocks ready to compose.",
+        },
+        {
+          title: "SEO defaults",
+          description:
+            "Metadata, Open Graph images, sitemap and robots included.",
+        },
       ],
       outcome:
         "It is the base I reuse for landing pages and personal sites, including this one. Setting up a new site takes a content file and a token pass instead of a rebuild.",
@@ -204,7 +267,8 @@ export const en: Dictionary = {
     "daboor-delivery": {
       title: "Daboor Delivery",
       category: "Product Concept",
-      summary: "A delivery application concept focused on a calm ordering flow and honest order status.",
+      summary:
+        "A delivery application concept focused on a calm ordering flow and honest order status.",
       status: "Concept · design and prototype",
       overview:
         "A concept for a local delivery app aimed at small cities, where drivers are few, orders are phone-first and customers mostly want to know one thing: where is my order right now.",
@@ -213,15 +277,39 @@ export const en: Dictionary = {
       approach:
         "I designed the order lifecycle as a small state machine — placed, accepted, preparing, on the way, delivered — and built the interface around those states rather than around a map. Each state has one clear sentence, one action, and a realistic time range instead of a fake countdown.",
       architecture: [
-        { label: "Frontend", value: "React with TypeScript, component-driven order states and optimistic updates." },
-        { label: "Backend", value: "Node.js service exposing the order lifecycle as explicit transitions." },
-        { label: "Database", value: "PostgreSQL schema for orders, items, addresses and status history." },
+        {
+          label: "Frontend",
+          value:
+            "React with TypeScript, component-driven order states and optimistic updates.",
+        },
+        {
+          label: "Backend",
+          value:
+            "Node.js service exposing the order lifecycle as explicit transitions.",
+        },
+        {
+          label: "Database",
+          value:
+            "PostgreSQL schema for orders, items, addresses and status history.",
+        },
       ],
       features: [
-        { title: "Order state machine", description: "Explicit transitions with a full status history." },
-        { title: "Reorder in one tap", description: "Recent orders repeat without re-entering an address." },
-        { title: "Honest estimates", description: "Time ranges instead of precise fake countdowns." },
-        { title: "Arabic-first UI", description: "RTL layout, Arabic numerals and local address formats." },
+        {
+          title: "Order state machine",
+          description: "Explicit transitions with a full status history.",
+        },
+        {
+          title: "Reorder in one tap",
+          description: "Recent orders repeat without re-entering an address.",
+        },
+        {
+          title: "Honest estimates",
+          description: "Time ranges instead of precise fake countdowns.",
+        },
+        {
+          title: "Arabic-first UI",
+          description: "RTL layout, Arabic numerals and local address formats.",
+        },
       ],
       outcome:
         "The prototype settled the interaction model for the order flow and produced a reusable status component set that I have since adapted for other projects.",
@@ -229,7 +317,8 @@ export const en: Dictionary = {
     "ai-saas-dashboard": {
       title: "AI SaaS Dashboard",
       category: "Interface Concept",
-      summary: "A dashboard concept for AI-powered products: usage, cost and model behaviour in one view.",
+      summary:
+        "A dashboard concept for AI-powered products: usage, cost and model behaviour in one view.",
       status: "Concept · interface system",
       overview:
         "An interface study for teams shipping AI features, where the important numbers are usage, latency, spend and failure rate — and where those numbers change by the minute.",
@@ -238,15 +327,42 @@ export const en: Dictionary = {
       approach:
         "I designed a fixed information hierarchy: one primary metric, three supporting metrics, then a breakdown table. Streaming updates animate values in place rather than re-rendering whole panels, and every chart has a plain-language summary above it so the page is usable without reading the axes.",
       architecture: [
-        { label: "Frontend", value: "Next.js App Router with server components for the shell and client islands for live panels." },
-        { label: "Data", value: "Streamed updates over server-sent events with a stable, typed payload contract." },
-        { label: "Backend", value: "Node.js aggregation layer that pre-computes rollups instead of querying raw events." },
+        {
+          label: "Frontend",
+          value:
+            "Next.js App Router with server components for the shell and client islands for live panels.",
+        },
+        {
+          label: "Data",
+          value:
+            "Streamed updates over server-sent events with a stable, typed payload contract.",
+        },
+        {
+          label: "Backend",
+          value:
+            "Node.js aggregation layer that pre-computes rollups instead of querying raw events.",
+        },
       ],
       features: [
-        { title: "Usage and spend", description: "Token, request and cost rollups by model and by key." },
-        { title: "Live panels", description: "Streamed values that update in place without layout shift." },
-        { title: "Failure visibility", description: "Error rate and latency surfaced next to volume, not hidden." },
-        { title: "Keyboard first", description: "Full navigation, filtering and range selection from the keyboard." },
+        {
+          title: "Usage and spend",
+          description: "Token, request and cost rollups by model and by key.",
+        },
+        {
+          title: "Live panels",
+          description:
+            "Streamed values that update in place without layout shift.",
+        },
+        {
+          title: "Failure visibility",
+          description:
+            "Error rate and latency surfaced next to volume, not hidden.",
+        },
+        {
+          title: "Keyboard first",
+          description:
+            "Full navigation, filtering and range selection from the keyboard.",
+        },
       ],
       outcome:
         "The concept produced a chart and metric component set with consistent empty, loading and error states — the parts that usually get added last and look it.",
@@ -254,7 +370,8 @@ export const en: Dictionary = {
     "arabic-ui-kit": {
       title: "Arabic UI Kit",
       category: "Component System",
-      summary: "A reusable RTL interface component system for Arabic-first products.",
+      summary:
+        "A reusable RTL interface component system for Arabic-first products.",
       status: "In progress · internal library",
       overview:
         "A component library built for Arabic interfaces, where RTL support is the default rather than a flag — covering typography, forms, navigation, tables and the bidirectional edge cases that break most kits.",
@@ -263,15 +380,41 @@ export const en: Dictionary = {
       approach:
         "Every component uses logical CSS properties, so direction is a document attribute rather than a second stylesheet. Mixed-direction content is isolated with bidi-safe wrappers, icons that carry direction are flipped explicitly while brand marks are not, and the type scale ships with separate Arabic line-height and tracking values.",
       architecture: [
-        { label: "Frontend", value: "React and TypeScript components styled with Tailwind logical utilities." },
-        { label: "Tokens", value: "Shared CSS variables with direction-aware typography metrics." },
-        { label: "Testing", value: "Every component rendered in both directions in the same review pass." },
+        {
+          label: "Frontend",
+          value:
+            "React and TypeScript components styled with Tailwind logical utilities.",
+        },
+        {
+          label: "Tokens",
+          value:
+            "Shared CSS variables with direction-aware typography metrics.",
+        },
+        {
+          label: "Testing",
+          value:
+            "Every component rendered in both directions in the same review pass.",
+        },
       ],
       features: [
-        { title: "Logical properties", description: "No mirrored stylesheet — direction is an attribute." },
-        { title: "Bidi-safe text", description: "Latin names and numbers isolated inside Arabic sentences." },
-        { title: "Arabic type scale", description: "Separate line-height and tracking for Arabic." },
-        { title: "Accessible by default", description: "Labels, focus states and roles built into each component." },
+        {
+          title: "Logical properties",
+          description: "No mirrored stylesheet — direction is an attribute.",
+        },
+        {
+          title: "Bidi-safe text",
+          description:
+            "Latin names and numbers isolated inside Arabic sentences.",
+        },
+        {
+          title: "Arabic type scale",
+          description: "Separate line-height and tracking for Arabic.",
+        },
+        {
+          title: "Accessible by default",
+          description:
+            "Labels, focus states and roles built into each component.",
+        },
       ],
       outcome:
         "The kit powers the Arabic side of my other projects, including the bilingual interface of this portfolio and Tel El-Kebir Guide.",
@@ -297,12 +440,14 @@ export const en: Dictionary = {
       email: "Email",
       emailPlaceholder: "you@company.com",
       message: "Message",
-      messagePlaceholder: "What are you building, and what do you need help with?",
+      messagePlaceholder:
+        "What are you building, and what do you need help with?",
       submit: "Send message",
       sending: "Sending…",
       required: "Required",
       successTitle: "Message sent.",
-      successBody: "Thanks for reaching out — I'll get back to you at the address you provided.",
+      successBody:
+        "Thanks for reaching out — I'll get back to you at the address you provided.",
       sendAnother: "Send another message",
       errors: {
         name: "Please enter your name.",
@@ -310,7 +455,8 @@ export const en: Dictionary = {
         emailFormat: "That email address doesn't look right.",
         message: "Please write a short message.",
         messageShort: "A little more detail helps — at least 20 characters.",
-        generic: "Something went wrong while sending. Please try again, or email me directly.",
+        generic:
+          "Something went wrong while sending. Please try again, or email me directly.",
       },
       privacy: "Your details are stored only to answer your message.",
     },

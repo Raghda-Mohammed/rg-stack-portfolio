@@ -33,7 +33,13 @@ export type Dictionary = {
     primaryLabel: string;
     skipToContent: string;
   };
-  theme: { label: string; light: string; dark: string; switchToDark: string; switchToLight: string };
+  theme: {
+    label: string;
+    light: string;
+    dark: string;
+    switchToDark: string;
+    switchToLight: string;
+  };
   language: { label: string; en: string; ar: string };
   hero: {
     eyebrow: string;
@@ -72,6 +78,8 @@ export type Dictionary = {
     intro: string;
     featuredLabel: string;
     viewCaseStudy: string;
+    liveDemo: string;
+    github: string;
     otherLabel: string;
     otherHeading: string;
     previewCaption: string;
