@@ -11,6 +11,7 @@ export type PortfolioProject = {
   tech: TechKey[];
   sketch: SketchVariant;
   imageUrl: string;
+  mobileImageUrl?: string;
   liveUrl: string;
   githubUrl: string;
   en: ProjectCopy;

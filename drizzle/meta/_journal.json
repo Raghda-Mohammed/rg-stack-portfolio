@@ -8,6 +8,20 @@
       "when": 1778760000000,
       "tag": "0000_initial",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790609982226,
+      "tag": "0001_portfolio_projects",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790609982227,
+      "tag": "0002_add_mobile_image_url",
+      "breakpoints": true
     }
   ]
 }

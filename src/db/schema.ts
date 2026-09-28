@@ -1,4 +1,13 @@
-import { index, jsonb, pgTable, serial, text, timestamp, varchar, boolean } from "drizzle-orm/pg-core";
+import {
+  index,
+  jsonb,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  varchar,
+  boolean,
+} from "drizzle-orm/pg-core";
 
 /**
  * Messages submitted through the contact form.
@@ -13,14 +22,15 @@ export const contactMessages = pgTable(
     message: text("message").notNull(),
     locale: varchar("locale", { length: 5 }).notNull().default("en"),
     source: varchar("source", { length: 60 }).notNull().default("website"),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
   },
   (table) => [index("contact_messages_created_at_idx").on(table.createdAt)],
 );
 
 export type ContactMessage = typeof contactMessages.$inferSelect;
 export type NewContactMessage = typeof contactMessages.$inferInsert;
-
 
 /** Portfolio projects managed from the private admin dashboard. */
 export const projects = pgTable(
@@ -35,12 +45,17 @@ export const projects = pgTable(
     tech: text("tech").array().notNull().default([]),
     sketch: varchar("sketch", { length: 30 }).notNull().default("template"),
     imageUrl: text("image_url").notNull(),
+    mobileImageUrl: text("mobile_image_url"),
     liveUrl: text("live_url"),
     githubUrl: text("github_url"),
     enCopy: jsonb("en_copy").notNull(),
     arCopy: jsonb("ar_copy").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
   },
   (table) => [
     index("portfolio_projects_published_idx").on(table.published),

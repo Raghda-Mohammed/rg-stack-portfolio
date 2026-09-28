@@ -442,6 +442,20 @@ export const ar: Dictionary = {
       privacy: "تُحفظ بياناتك للرد على رسالتك فقط.",
     },
   },
+  admin: {
+    projects: {
+      loadError: "تعذر تحميل الأعمال",
+      imageRequired: "يرجى رفع صورة العمل أولًا.",
+      saveError: "تعذر حفظ العمل",
+      updateSuccess: "تم تحديث العمل بنجاح.",
+      createSuccess: "تمت إضافة العمل بنجاح.",
+      deleteConfirm: "هل تريد حذف هذا العمل؟",
+      deleteSuccess: "تم حذف العمل.",
+      deleteError: "تعذر حذف العمل",
+      desktopImage: "صورة سطح المكتب",
+      mobileImage: "صورة الموبايل",
+    },
+  },
   footer: {
     tagline: "مطوّر ويب متكامل يبني تطبيقات ويب حديثة.",
     copyright: "© 2026 RG Stack. جميع الحقوق محفوظة.",

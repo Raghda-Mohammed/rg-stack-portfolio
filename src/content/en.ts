@@ -461,6 +461,20 @@ export const en: Dictionary = {
       privacy: "Your details are stored only to answer your message.",
     },
   },
+  admin: {
+    projects: {
+      loadError: "Unable to load projects",
+      imageRequired: "Please upload the project image first.",
+      saveError: "Unable to save the project",
+      updateSuccess: "Project updated successfully.",
+      createSuccess: "Project added successfully.",
+      deleteConfirm: "Do you want to delete this project?",
+      deleteSuccess: "Project deleted.",
+      deleteError: "Unable to delete the project",
+      desktopImage: "Desktop image",
+      mobileImage: "Mobile image",
+    },
+  },
   footer: {
     tagline: "Full-Stack Developer building modern web applications.",
     copyright: "© 2026 RG Stack. All rights reserved.",

@@ -105,19 +105,37 @@ export function FeaturedProject({ project }: { project: PortfolioProject }) {
 
         <div className="lg:col-span-7">
           <Reveal delay={0.08} className="sm:ps-12 lg:ps-14">
-            <div className="relative aspect-video overflow-hidden rounded-sm border border-line bg-bg-alt">
-              <Image
-                src={project.imageUrl}
-                alt={copy.title}
-                fill
-                sizes="(max-width: 1024px) 100vw, 60vw"
-                className="object-cover"
-                priority={project.featured}
-                unoptimized
-              />
+            <div className="relative aspect-video rounded-sm bg-bg-alt">
+              <div className="absolute inset-0 overflow-hidden rounded-2xl border-4 border-bg bg-bg shadow-2xl ring-1 ring-black/10">
+                <Image
+                  src={project.imageUrl}
+                  alt={copy.title}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 60vw"
+                  className="object-cover"
+                  priority={project.featured}
+                  unoptimized
+                />
+              </div>
+
+              {project.mobileImageUrl ? (
+                <div className="absolute -bottom-[30%] end-4 z-10 w-[24%] max-w-[150px] min-w-[90px]">
+                  <div className="relative aspect-[9/19.5] overflow-hidden rounded-[1.25rem] border-4 border-bg bg-bg shadow-2xl ring-1 ring-black/10">
+                    <Image
+                      src={project.mobileImageUrl}
+                      alt={`${copy.title} — Mobile`}
+                      fill
+                      sizes="150px"
+                      className="object-cover"
+                      loading="lazy"
+                      unoptimized
+                    />
+                  </div>
+                </div>
+              ) : null}
             </div>
 
-            <p className="t-caption mt-12 text-muted sm:mt-14">
+            <p className="t-caption mt-[28%] text-muted sm:mt-[24%]">
               {t.work.previewCaption}
             </p>
           </Reveal>

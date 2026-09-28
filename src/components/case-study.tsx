@@ -118,16 +118,45 @@ export function CaseStudy({
       <div className="border-y border-line bg-bg-alt py-14 md:py-20">
         <div className="container-editorial">
           <Reveal className="mx-auto max-w-5xl">
-            <div className="relative aspect-video overflow-hidden rounded-sm border border-line bg-bg">
-              <Image
-                src={project.imageUrl}
-                alt={copy.title}
-                fill
-                sizes="(max-width: 1024px) 100vw, 1024px"
-                className="object-cover"
-                priority
-                unoptimized
-              />
+            {/* Desktop preview */}
+            {/* Project previews */}
+            <div className="relative">
+              {/* Desktop preview */}
+              <div className="relative aspect-video overflow-hidden rounded-sm border border-line bg-bg">
+                <Image
+                  src={project.imageUrl}
+                  alt={copy.title}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 1024px"
+                  className="object-cover"
+                  priority
+                  unoptimized
+                />
+              </div>
+
+              {/* Mobile preview */}
+              {project.mobileImageUrl ? (
+                <>
+                  <div className="absolute top-[70%] end-5 z-10 w-[24%] max-w-[180px] min-w-[90px] -translate-y-[30%] sm:end-8">
+                    <div className="relative aspect-[9/19.5] overflow-hidden rounded-3xl border-4 border-bg bg-bg shadow-2xl ring-1 ring-black/10">
+                      <Image
+                        src={project.mobileImageUrl}
+                        alt={`${copy.title} — Mobile`}
+                        fill
+                        sizes="180px"
+                        className="object-cover"
+                        loading="lazy"
+                        unoptimized
+                      />
+                    </div>
+                  </div>
+
+                  <div
+                    className="h-[clamp(10rem,22vw,14rem)]"
+                    aria-hidden="true"
+                  />
+                </>
+              ) : null}
             </div>
           </Reveal>
 

@@ -20,7 +20,11 @@ const seedImages = [
 
 function copyFor(dict: typeof en, slug: string): ProjectCopy {
   const copy = dict.projects[slug];
-  if (!copy) throw new Error(`Missing project copy for ${slug}`);
+
+  if (!copy) {
+    throw new Error(`Missing project copy for ${slug}`);
+  }
+
   return copy;
 }
 
@@ -34,7 +38,13 @@ function rowToProject(row: typeof projects.$inferSelect): PortfolioProject {
     published: row.published,
     tech: row.tech as TechKey[],
     sketch: row.sketch as SketchVariant,
+
+    // Desktop preview
     imageUrl: row.imageUrl,
+
+    // Mobile preview
+    ...(row.mobileImageUrl ? { mobileImageUrl: row.mobileImageUrl } : {}),
+
     liveUrl: row.liveUrl ?? "",
     githubUrl: row.githubUrl ?? "",
     en: row.enCopy as ProjectCopy,
@@ -44,6 +54,7 @@ function rowToProject(row: typeof projects.$inferSelect): PortfolioProject {
 
 export async function seedProjectsIfNeeded() {
   const existing = await db.select({ id: projects.id }).from(projects).limit(1);
+
   if (existing.length) return;
 
   await db.insert(projects).values(
@@ -56,6 +67,10 @@ export async function seedProjectsIfNeeded() {
       tech: project.tech,
       sketch: project.sketch,
       imageUrl: seedImages[index] ?? seedImages[0],
+
+      // Existing seeded projects do not have a separate mobile image.
+      mobileImageUrl: null,
+
       liveUrl: project.slug === "tel-el-kebir-guide" ? "" : "",
       githubUrl: "",
       enCopy: copyFor(en, project.slug),
@@ -64,16 +79,24 @@ export async function seedProjectsIfNeeded() {
   );
 }
 
-export async function getPortfolioProjects(options?: { includeUnpublished?: boolean }) {
+export async function getPortfolioProjects(options?: {
+  includeUnpublished?: boolean;
+}) {
   try {
     await seedProjectsIfNeeded();
+
     const query = db.select().from(projects);
+
     const rows = options?.includeUnpublished
       ? await query.orderBy(asc(projects.index))
-      : await query.where(eq(projects.published, true)).orderBy(asc(projects.index));
+      : await query
+          .where(eq(projects.published, true))
+          .orderBy(asc(projects.index));
+
     return rows.map(rowToProject);
   } catch (error) {
     console.error("[projects] Failed to load projects", error);
+
     return PROJECTS.map((project, index) => ({
       id: index + 1,
       slug: project.slug,
@@ -84,6 +107,8 @@ export async function getPortfolioProjects(options?: { includeUnpublished?: bool
       tech: project.tech,
       sketch: project.sketch,
       imageUrl: seedImages[index] ?? seedImages[0],
+
+      // No mobile preview in the static fallback.
       liveUrl: "",
       githubUrl: "",
       en: copyFor(en, project.slug),
@@ -94,16 +119,24 @@ export async function getPortfolioProjects(options?: { includeUnpublished?: bool
 
 export async function getPortfolioProject(slug: string) {
   const projectsList = await getPortfolioProjects();
+
   return projectsList.find((project) => project.slug === slug);
 }
 
 export async function getAdminProjects() {
   await seedProjectsIfNeeded();
+
   const rows = await db.select().from(projects).orderBy(asc(projects.index));
+
   return rows.map(rowToProject);
 }
 
 export async function getProjectRecord(id: number) {
-  const rows = await db.select().from(projects).where(eq(projects.id, id)).limit(1);
+  const rows = await db
+    .select()
+    .from(projects)
+    .where(eq(projects.id, id))
+    .limit(1);
+
   return rows[0] ? rowToProject(rows[0]) : null;
 }

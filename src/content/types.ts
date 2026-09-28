@@ -140,6 +140,20 @@ export type Dictionary = {
       privacy: string;
     };
   };
+  admin: {
+    projects: {
+      loadError: string;
+      imageRequired: string;
+      saveError: string;
+      updateSuccess: string;
+      createSuccess: string;
+      deleteConfirm: string;
+      deleteSuccess: string;
+      deleteError: string;
+      desktopImage: string;
+      mobileImage: string;
+    };
+  };
   footer: {
     tagline: string;
     copyright: string;

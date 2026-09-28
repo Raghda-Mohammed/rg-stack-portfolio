@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+
 import type { PortfolioProject } from "@/content/project-types";
 import type { SketchVariant, TechKey } from "@/content/site";
 import type { ProjectCopy } from "@/content/types";
 import { AdminProjectImageUploader } from "@/components/AdminProjectImageUploader";
-import Image from "next/image";
-// save()
+import { useI18n } from "@/lib/i18n";
+
 const TECH_OPTIONS: TechKey[] = [
   "nextjs",
   "react",
@@ -46,6 +48,7 @@ type FormState = {
   tech: TechKey[];
   sketch: SketchVariant;
   imageUrl: string;
+  mobileImageUrl: string;
   liveUrl: string;
   githubUrl: string;
   en: ProjectCopy;
@@ -74,6 +77,7 @@ const emptyForm = (): FormState => ({
   tech: ["nextjs", "typescript"],
   sketch: "template",
   imageUrl: "",
+  mobileImageUrl: "",
   liveUrl: "",
   githubUrl: "",
   en: emptyCopy(),
@@ -91,6 +95,7 @@ function toForm(project: PortfolioProject): FormState {
     tech: project.tech,
     sketch: project.sketch,
     imageUrl: project.imageUrl,
+    mobileImageUrl: project.mobileImageUrl ?? "",
     liveUrl: project.liveUrl,
     githubUrl: project.githubUrl,
     en: project.en,
@@ -143,16 +148,20 @@ function copyToText(copy: ProjectCopy) {
 }
 
 export default function AdminProjectsPage() {
+  const { t } = useI18n();
+
   const [projects, setProjects] = useState<PortfolioProject[]>([]);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+
   const [architectureText, setArchitectureText] = useState({
     en: "",
     ar: "",
   });
+
   const [featuresText, setFeaturesText] = useState({
     en: "",
     ar: "",
@@ -163,14 +172,16 @@ export default function AdminProjectsPage() {
       const response = await fetch("/api/admin/projects");
 
       if (!response.ok) {
-        throw new Error("تعذر تحميل الأعمال");
+        throw new Error(t.admin.projects.loadError);
       }
 
       const data = await response.json();
       setProjects(data.data ?? []);
     } catch (loadError) {
       setError(
-        loadError instanceof Error ? loadError.message : "تعذر تحميل الأعمال",
+        loadError instanceof Error
+          ? loadError.message
+          : t.admin.projects.loadError,
       );
     }
   }
@@ -183,7 +194,7 @@ export default function AdminProjectsPage() {
         const response = await fetch("/api/admin/projects");
 
         if (!response.ok) {
-          throw new Error("تعذر تحميل الأعمال");
+          throw new Error(t.admin.projects.loadError);
         }
 
         const data = await response.json();
@@ -196,7 +207,7 @@ export default function AdminProjectsPage() {
           setError(
             loadError instanceof Error
               ? loadError.message
-              : "تعذر تحميل الأعمال",
+              : t.admin.projects.loadError,
           );
         }
       } finally {
@@ -211,7 +222,7 @@ export default function AdminProjectsPage() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [t.admin.projects.loadError]);
 
   const sortedProjects = useMemo(
     () => [...projects].sort((a, b) => a.index.localeCompare(b.index)),
@@ -245,14 +256,17 @@ export default function AdminProjectsPage() {
 
   function reset() {
     setForm(emptyForm());
+
     setArchitectureText({
       en: "",
       ar: "",
     });
+
     setFeaturesText({
       en: "",
       ar: "",
     });
+
     setMessage("");
     setError("");
   }
@@ -273,7 +287,7 @@ export default function AdminProjectsPage() {
 
   async function save() {
     if (!form.imageUrl.trim()) {
-      setError("ÙŠØ±Ø¬Ù‰ Ø±ÙØ¹ ØµÙˆØ±Ø© Ø§Ù„Ø¹Ù…Ù„ Ø£ÙˆÙ„Ù‹Ø§.");
+      setError(t.admin.projects.imageRequired);
       return;
     }
 
@@ -291,13 +305,16 @@ export default function AdminProjectsPage() {
         tech: form.tech,
         sketch: form.sketch,
         imageUrl: form.imageUrl,
+        mobileImageUrl: form.mobileImageUrl,
         liveUrl: form.liveUrl,
         githubUrl: form.githubUrl,
+
         en: {
           ...form.en,
           architecture: parsePairs(architectureText.en, "|"),
           features: parseFeatures(featuresText.en, "|"),
         },
+
         ar: {
           ...form.ar,
           architecture: parsePairs(architectureText.ar, "|"),
@@ -319,13 +336,13 @@ export default function AdminProjectsPage() {
       const data = await response.json().catch(() => null);
 
       if (!response.ok) {
-        throw new Error(data?.error ?? "ØªØ¹Ø°Ø± ØÙØ¸ Ø§Ù„Ø¹Ù…Ù„");
+        throw new Error(data?.error ?? t.admin.projects.saveError);
       }
 
       setMessage(
         form.id
-          ? "ØªÙ… ØªØØ¯ÙŠØ« Ø§Ù„Ø¹Ù…Ù„ Ø¨Ù†Ø¬Ø§Ø."
-          : "ØªÙ…Øª Ø¥Ø¶Ø§ÙØ© Ø§Ù„Ø¹Ù…Ù„ Ø¨Ù†Ø¬Ø§Ø.",
+          ? t.admin.projects.updateSuccess
+          : t.admin.projects.createSuccess,
       );
 
       reset();
@@ -334,7 +351,7 @@ export default function AdminProjectsPage() {
       setError(
         saveError instanceof Error
           ? saveError.message
-          : "ØªØ¹Ø°Ø± ØÙØ¸ Ø§Ù„Ø¹Ù…Ù„",
+          : t.admin.projects.saveError,
       );
     } finally {
       setSaving(false);
@@ -342,7 +359,7 @@ export default function AdminProjectsPage() {
   }
 
   async function remove(id: number) {
-    if (!window.confirm("هل تريد حذف هذا العمل؟")) {
+    if (!window.confirm(t.admin.projects.deleteConfirm)) {
       return;
     }
 
@@ -357,9 +374,9 @@ export default function AdminProjectsPage() {
         reset();
       }
 
-      setMessage("تم حذف العمل.");
+      setMessage(t.admin.projects.deleteSuccess);
     } else {
-      setError("تعذر حذف العمل");
+      setError(t.admin.projects.deleteError);
     }
   }
 
@@ -432,11 +449,11 @@ export default function AdminProjectsPage() {
             <Field
               label="Slug"
               value={form.slug}
-              onChange={(v) =>
-                setForm({
-                  ...form,
-                  slug: v,
-                })
+              onChange={(value) =>
+                setForm((current) => ({
+                  ...current,
+                  slug: value,
+                }))
               }
               dir="ltr"
             />
@@ -444,11 +461,11 @@ export default function AdminProjectsPage() {
             <Field
               label="الترتيب"
               value={form.index}
-              onChange={(v) =>
-                setForm({
-                  ...form,
-                  index: v,
-                })
+              onChange={(value) =>
+                setForm((current) => ({
+                  ...current,
+                  index: value,
+                }))
               }
               dir="ltr"
             />
@@ -456,37 +473,59 @@ export default function AdminProjectsPage() {
             <Field
               label="السنة"
               value={form.year}
-              onChange={(v) =>
-                setForm({
-                  ...form,
-                  year: v,
-                })
+              onChange={(value) =>
+                setForm((current) => ({
+                  ...current,
+                  year: value,
+                }))
               }
               dir="ltr"
             />
           </div>
 
-          <div className="mt-6">
-            <AdminProjectImageUploader
-              value={form.imageUrl}
-              onChange={(url) =>
-                setForm((current) => ({
-                  ...current,
-                  imageUrl: url,
-                }))
-              }
-            />
+          <div className="mt-6 grid gap-5 lg:grid-cols-2">
+            <div>
+              <p className="mb-3 text-sm font-semibold text-ink">
+                {t.admin.projects.desktopImage}
+              </p>
+
+              <AdminProjectImageUploader
+                value={form.imageUrl}
+                onChange={(url) =>
+                  setForm((current) => ({
+                    ...current,
+                    imageUrl: url,
+                  }))
+                }
+              />
+            </div>
+
+            <div>
+              <p className="mb-3 text-sm font-semibold text-ink">
+                {t.admin.projects.mobileImage}
+              </p>
+
+              <AdminProjectImageUploader
+                value={form.mobileImageUrl}
+                onChange={(url) =>
+                  setForm((current) => ({
+                    ...current,
+                    mobileImageUrl: url,
+                  }))
+                }
+              />
+            </div>
           </div>
 
           <div className="mt-5 grid gap-5 md:grid-cols-2">
             <Field
               label="رابط الموقع"
               value={form.liveUrl}
-              onChange={(v) =>
-                setForm({
-                  ...form,
-                  liveUrl: v,
-                })
+              onChange={(value) =>
+                setForm((current) => ({
+                  ...current,
+                  liveUrl: value,
+                }))
               }
               dir="ltr"
             />
@@ -494,11 +533,11 @@ export default function AdminProjectsPage() {
             <Field
               label="رابط GitHub"
               value={form.githubUrl}
-              onChange={(v) =>
-                setForm({
-                  ...form,
-                  githubUrl: v,
-                })
+              onChange={(value) =>
+                setForm((current) => ({
+                  ...current,
+                  githubUrl: value,
+                }))
               }
               dir="ltr"
             />
@@ -509,11 +548,11 @@ export default function AdminProjectsPage() {
               <input
                 type="checkbox"
                 checked={form.published}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    published: e.target.checked,
-                  })
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    published: event.target.checked,
+                  }))
                 }
               />
               منشور على الموقع
@@ -523,11 +562,11 @@ export default function AdminProjectsPage() {
               <input
                 type="checkbox"
                 checked={form.featured}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    featured: e.target.checked,
-                  })
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    featured: event.target.checked,
+                  }))
                 }
               />
               العمل الرئيسي
@@ -537,16 +576,18 @@ export default function AdminProjectsPage() {
               نمط المعاينة
               <select
                 value={form.sketch}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    sketch: e.target.value as SketchVariant,
-                  })
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    sketch: event.target.value as SketchVariant,
+                  }))
                 }
                 className="rounded border border-line bg-bg px-3 py-2"
               >
                 {SKETCH_OPTIONS.map((option) => (
-                  <option key={option}>{option}</option>
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
                 ))}
               </select>
             </label>
@@ -565,13 +606,13 @@ export default function AdminProjectsPage() {
                   <input
                     type="checkbox"
                     checked={form.tech.includes(tech)}
-                    onChange={(e) =>
-                      setForm({
-                        ...form,
-                        tech: e.target.checked
-                          ? [...form.tech, tech]
-                          : form.tech.filter((item) => item !== tech),
-                      })
+                    onChange={(event) =>
+                      setForm((current) => ({
+                        ...current,
+                        tech: event.target.checked
+                          ? [...current.tech, tech]
+                          : current.tech.filter((item) => item !== tech),
+                      }))
                     }
                   />
 
@@ -588,17 +629,17 @@ export default function AdminProjectsPage() {
               updateCopy={updateCopy}
               architectureText={architectureText.en}
               setArchitectureText={(value) =>
-                setArchitectureText({
-                  ...architectureText,
+                setArchitectureText((current) => ({
+                  ...current,
                   en: value,
-                })
+                }))
               }
               featuresText={featuresText.en}
               setFeaturesText={(value) =>
-                setFeaturesText({
-                  ...featuresText,
+                setFeaturesText((current) => ({
+                  ...current,
                   en: value,
-                })
+                }))
               }
             />
 
@@ -608,17 +649,17 @@ export default function AdminProjectsPage() {
               updateCopy={updateCopy}
               architectureText={architectureText.ar}
               setArchitectureText={(value) =>
-                setArchitectureText({
-                  ...architectureText,
+                setArchitectureText((current) => ({
+                  ...current,
                   ar: value,
-                })
+                }))
               }
               featuresText={featuresText.ar}
               setFeaturesText={(value) =>
-                setFeaturesText({
-                  ...featuresText,
+                setFeaturesText((current) => ({
+                  ...current,
                   ar: value,
-                })
+                }))
               }
             />
           </div>
@@ -725,7 +766,7 @@ function Field({
 
       <input
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(event) => onChange(event.target.value)}
         className="mt-2.5 w-full rounded-sm border border-line bg-bg px-3.5 py-3 text-ink"
         dir={dir}
       />
@@ -788,14 +829,18 @@ function CopyEditor({
             key === "outcome" ? (
               <textarea
                 value={copy[key]}
-                onChange={(e) => updateCopy(locale, key, e.target.value)}
+                onChange={(event) =>
+                  updateCopy(locale, key, event.target.value)
+                }
                 rows={key === "summary" ? 3 : 5}
                 className="mt-2 w-full rounded-sm border border-line bg-bg px-3 py-2.5 text-sm"
               />
             ) : (
               <input
                 value={copy[key]}
-                onChange={(e) => updateCopy(locale, key, e.target.value)}
+                onChange={(event) =>
+                  updateCopy(locale, key, event.target.value)
+                }
                 className="mt-2 w-full rounded-sm border border-line bg-bg px-3 py-2.5 text-sm"
               />
             )}
@@ -809,7 +854,7 @@ function CopyEditor({
 
           <textarea
             value={architectureText}
-            onChange={(e) => setArchitectureText(e.target.value)}
+            onChange={(event) => setArchitectureText(event.target.value)}
             rows={5}
             className="mt-2 w-full rounded-sm border border-line bg-bg px-3 py-2.5 text-sm"
             dir="auto"
@@ -823,7 +868,7 @@ function CopyEditor({
 
           <textarea
             value={featuresText}
-            onChange={(e) => setFeaturesText(e.target.value)}
+            onChange={(event) => setFeaturesText(event.target.value)}
             rows={5}
             className="mt-2 w-full rounded-sm border border-line bg-bg px-3 py-2.5 text-sm"
             dir="auto"

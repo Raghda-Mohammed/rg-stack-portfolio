@@ -17,28 +17,45 @@ export function ProjectCard({ project }: { project: PortfolioProject }) {
         href={`/projects/${project.slug}`}
         className="block rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
       >
-        <div className="relative aspect-video overflow-hidden rounded-sm border border-line bg-bg-alt">
-          <Image
-            src={project.imageUrl}
-            alt={copy.title}
-            fill
-            sizes="(max-width: 640px) 100vw, 50vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-            unoptimized
-          />
+        <div className="relative">
+          <div className="relative aspect-video overflow-hidden rounded-sm border border-line bg-bg-alt">
+            <Image
+              src={project.imageUrl}
+              alt={copy.title}
+              fill
+              sizes="(max-width: 640px) 100vw, 50vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              unoptimized
+            />
+          </div>
+
+          {project.mobileImageUrl ? (
+            <>
+              <div className="absolute -bottom-[70%] end-4 z-10 w-[24%] max-w-[120px] min-w-[72px]">
+                <div className="relative aspect-[9/19.5] overflow-hidden rounded-2xl border-4 border-bg bg-bg shadow-2xl ring-1 ring-black/10">
+                  <Image
+                    src={project.mobileImageUrl}
+                    alt={`${copy.title} — Mobile`}
+                    fill
+                    sizes="120px"
+                    className="object-cover"
+                    loading="lazy"
+                    unoptimized
+                  />
+                </div>
+              </div>
+
+              <div className="h-[clamp(8rem,18vw,11rem)]" aria-hidden="true" />
+            </>
+          ) : null}
         </div>
 
         <div className="mt-6 flex items-baseline gap-3">
           <span className="t-label text-muted">{project.index}</span>
 
-          <span className="t-caption text-muted">
-            {copy.category}
-          </span>
+          <span className="t-caption text-muted">{copy.category}</span>
 
-          <span
-            aria-hidden
-            className="h-px flex-1 bg-line"
-          />
+          <span aria-hidden className="h-px flex-1 bg-line" />
 
           <span className="t-caption text-muted tabular-nums keep-latin">
             {project.year}
@@ -49,25 +66,18 @@ export function ProjectCard({ project }: { project: PortfolioProject }) {
           {copy.title}
         </h3>
 
-        <p className="t-body-s mt-3 max-w-[46ch] text-muted">
-          {copy.summary}
-        </p>
+        <p className="t-body-s mt-3 max-w-[46ch] text-muted">{copy.summary}</p>
 
         <ul className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
           {project.tech.map((tech) => (
-            <li
-              key={tech}
-              className="t-mono keep-latin text-muted"
-            >
+            <li key={tech} className="t-mono keep-latin text-muted">
               {TECH_LABEL[tech]}
             </li>
           ))}
         </ul>
 
         <span className="mt-6 inline-flex items-center gap-2 text-ink-2 transition-colors duration-200 group-hover:text-accent">
-          <span className="t-label">
-            {t.work.viewCaseStudy}
-          </span>
+          <span className="t-label">{t.work.viewCaseStudy}</span>
 
           <ArrowRight className="arrow-shift h-3.5 w-3.5 rtl:-scale-x-100" />
         </span>
