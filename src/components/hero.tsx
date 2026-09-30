@@ -45,9 +45,10 @@ export function Hero() {
             <motion.h1
               {...rise(0.1)}
               id="hero-heading"
-              className="t-display-xl brand-latin mt-2 text-ink"
+              className="t-display-xl brand-latin mt-2"
             >
-              {t.hero.name}
+              <span className="text-accent">RD</span>
+              <span className="text-ink"> Stack</span>
             </motion.h1>
 
             <motion.div

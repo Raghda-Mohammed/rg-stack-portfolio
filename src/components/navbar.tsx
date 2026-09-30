@@ -24,9 +24,11 @@ function useActiveSection(enabled: boolean) {
 
   useEffect(() => {
     if (!enabled) return;
+
     const targets = NAV_ITEMS.map((item) =>
       document.getElementById(item.id),
     ).filter((node): node is HTMLElement => Boolean(node));
+
     if (targets.length === 0) return;
 
     const observer = new IntersectionObserver(
@@ -34,12 +36,19 @@ function useActiveSection(enabled: boolean) {
         const visible = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) setActive(visible.target.id);
+
+        if (visible) {
+          setActive(visible.target.id);
+        }
       },
-      { rootMargin: "-45% 0px -50% 0px", threshold: [0, 0.25, 0.5] },
+      {
+        rootMargin: "-45% 0px -50% 0px",
+        threshold: [0, 0.25, 0.5],
+      },
     );
 
     targets.forEach((target) => observer.observe(target));
+
     return () => observer.disconnect();
   }, [enabled]);
 
@@ -49,44 +58,65 @@ function useActiveSection(enabled: boolean) {
 export function Navbar() {
   const { t } = useI18n();
   const pathname = usePathname();
+
   const isHome = pathname === "/";
   const active = useActiveSection(isHome);
+
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+
   const reduceMotion = useReducedMotion();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 12);
+    };
+
     onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+
+    window.addEventListener("scroll", onScroll, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   useEffect(() => {
     if (!open) return;
+
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
     };
+
     document.addEventListener("keydown", onKey);
+
     document.body.style.overflow = "hidden";
+
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
   }, [open]);
 
-  const close = useCallback(() => setOpen(false), []);
+  const close = useCallback(() => {
+    setOpen(false);
+  }, []);
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300 ${
+      className={`fixed inset-x-0 bottom-0 z-50 border-t transition-colors duration-300 lg:bottom-auto lg:top-0 lg:border-t-0 lg:border-b ${
         scrolled || open
           ? "border-line bg-bg/90 backdrop-blur-md supports-backdrop-filter:bg-bg/75"
           : "border-transparent bg-bg/90 backdrop-blur-md supports-backdrop-filter:bg-bg/75"
       }`}
     >
       <div className="container-editorial">
-        <div className="flex h-16 items-center justify-between gap-6 md:h-18">
+        <div className="flex h-16 items-center justify-between gap-4 md:h-18 lg:gap-6">
+          {/* Brand */}
           <Link
             href="/"
             onClick={close}
@@ -94,15 +124,18 @@ export function Navbar() {
             aria-label={`RD Stack — ${t.hero.role}`}
           >
             <Monogram className="h-9 w-9 transition-opacity duration-200 group-hover:opacity-80" />
+
             <span className="hidden sm:block">
               <Wordmark />
             </span>
           </Link>
 
+          {/* Desktop Navigation */}
           <nav aria-label={t.nav.primaryLabel} className="hidden lg:block">
             <ul className="flex items-center gap-1">
               {NAV_ITEMS.map((item) => {
                 const isActive = active === item.id;
+
                 return (
                   <li key={item.key}>
                     <Link
@@ -113,6 +146,7 @@ export function Navbar() {
                       }`}
                     >
                       {t.nav[item.key]}
+
                       <span
                         aria-hidden
                         className={`absolute inset-x-3.5 -bottom-0.5 h-px origin-center bg-accent transition-transform duration-200 ${
@@ -126,16 +160,29 @@ export function Navbar() {
             </ul>
           </nav>
 
+          {/* Actions */}
           <div className="flex items-center gap-2 md:gap-3">
-            <LanguageSwitcher className="hidden sm:inline-flex" />
+            {/* Language - outside mobile menu */}
+            <LanguageSwitcher className="text-xs sm:inline-flex" />
+
+            {/* Theme - outside mobile menu */}
             <ThemeToggle />
+
+            {/* Desktop CTA */}
             <Link
               href="/#contact"
-              className={buttonClass("primary", "sm", "hidden md:inline-flex")}
+              className={buttonClass(
+                "primary",
+                "sm",
+                "hidden min-w-30 justify-center md:inline-flex",
+              )}
             >
               {t.nav.cta}
+
               <ArrowRight className="arrow-shift h-3.5 w-3.5 rtl:-scale-x-100" />
             </Link>
+
+            {/* Mobile Menu Button - outside mobile menu */}
             <button
               type="button"
               onClick={() => setOpen((value) => !value)}
@@ -150,16 +197,39 @@ export function Navbar() {
         </div>
       </div>
 
+      {/* Mobile Menu */}
       <AnimatePresence>
         {open ? (
           <motion.div
             id="mobile-menu"
             key="mobile-menu"
-            initial={reduceMotion ? false : { opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
-            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="border-t border-line bg-bg lg:hidden"
+            initial={
+              reduceMotion
+                ? false
+                : {
+                    opacity: 0,
+                    y: 8,
+                  }
+            }
+            animate={{
+              opacity: 1,
+              y: 0,
+            }}
+            exit={
+              reduceMotion
+                ? {
+                    opacity: 0,
+                  }
+                : {
+                    opacity: 0,
+                    y: 8,
+                  }
+            }
+            transition={{
+              duration: 0.22,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="absolute inset-x-0 bottom-full border-t border-line bg-bg lg:hidden"
           >
             <nav
               aria-label={t.nav.menuLabel}
@@ -180,6 +250,7 @@ export function Navbar() {
                       <span className="t-heading-l font-display">
                         {t.nav[item.key]}
                       </span>
+
                       <span className="t-label text-muted">
                         {String(index + 1).padStart(2, "0")}
                       </span>
@@ -187,18 +258,20 @@ export function Navbar() {
                   </li>
                 ))}
               </ul>
-              <div className="mt-6 flex items-center justify-between gap-3">
-                <LanguageSwitcher className="sm:hidden" />
+
+              {/* Mobile CTA only */}
+              <div className="mt-6">
                 <Link
                   href="/#contact"
                   onClick={close}
                   className={buttonClass(
                     "primary",
                     "md",
-                    "flex-1 sm:flex-none",
+                    "w-full justify-center",
                   )}
                 >
                   {t.nav.cta}
+
                   <ArrowRight className="arrow-shift h-3.5 w-3.5 rtl:-scale-x-100" />
                 </Link>
               </div>

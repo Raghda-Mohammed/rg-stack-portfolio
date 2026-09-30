@@ -1,26 +1,55 @@
 "use client";
 
-import { useI18n } from "@/lib/i18n";
-import { useTheme } from "@/lib/theme";
-import { MoonIcon, SunIcon } from "./ui/icons";
+import { Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
 
-export function ThemeToggle({ className = "" }: { className?: string }) {
-  const { theme, toggleTheme, mounted } = useTheme();
-  const { t } = useI18n();
+const THEME_STORAGE_KEY = "rg-theme";
 
-  const label = mounted ? (theme === "dark" ? t.theme.switchToLight : t.theme.switchToDark) : t.theme.label;
+export function ThemeToggle() {
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const updateTheme = () => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    };
+
+    updateTheme();
+
+    const observer = new MutationObserver(updateTheme);
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  const toggleTheme = () => {
+    const root = document.documentElement;
+    const nextDark = !root.classList.contains("dark");
+
+    root.classList.toggle("dark", nextDark);
+    root.style.colorScheme = nextDark ? "dark" : "light";
+
+    localStorage.setItem(THEME_STORAGE_KEY, nextDark ? "dark" : "light");
+
+    setIsDark(nextDark);
+  };
 
   return (
     <button
       type="button"
       onClick={toggleTheme}
-      aria-label={label}
-      title={label}
-      className={`inline-flex h-9 w-9 items-center justify-center rounded-md border border-line text-ink-2 transition-colors duration-200 hover:border-line-strong hover:text-ink ${className}`}
+      aria-label={isDark ? "تفعيل الوضع الفاتح" : "تفعيل الوضع الداكن"}
+      title={isDark ? "الوضع الفاتح" : "الوضع الداكن"}
+      className="inline-flex h-8 w-8 items-center justify-center rounded-md text-ink transition-colors duration-200 hover:bg-surface-2 sm:h-9 sm:w-9"
     >
-      {/* Rendered with CSS variants so the icon is correct before hydration */}
-      <SunIcon className="hidden h-[1.05rem] w-[1.05rem] dark:block" />
-      <MoonIcon className="block h-[1.05rem] w-[1.05rem] dark:hidden" />
+      {isDark ? (
+        <Moon className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
+      ) : (
+        <Sun className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
+      )}
     </button>
   );
 }

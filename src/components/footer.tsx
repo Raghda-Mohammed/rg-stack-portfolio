@@ -40,6 +40,7 @@ export function Footer() {
             aria-label={`${SITE.name} — ${t.hero.role}`}
           >
             <Monogram className="h-9 w-9 transition-opacity duration-200 group-hover:opacity-80" />
+
             <span className="flex flex-col gap-1">
               <Wordmark />
               <span className="t-caption text-muted">{t.footer.tagline}</span>
@@ -65,7 +66,7 @@ export function Footer() {
                   }
                   aria-label={social.label}
                   title={social.label}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-line text-muted transition-colors duration-200 hover:border-line-strong hover:text-ink"
+                  className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-accent text-muted transition-colors duration-200 hover:bg-accent-soft hover:text-accent"
                 >
                   {social.icon}
                 </a>
@@ -75,7 +76,8 @@ export function Footer() {
         </div>
 
         <div className="flex flex-col gap-3 border-t border-line py-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="t-caption text-muted">{t.footer.builtWith}</p>
+          <p className="t-caption text-accent">{t.footer.builtWith}</p>
+
           <a
             href="#top"
             className="t-label text-muted transition-colors duration-200 hover:text-accent"

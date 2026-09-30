@@ -167,7 +167,7 @@ export default async function RootLayout({
         <ThemeProvider>
           <I18nProvider>
             <SkipLink />
-            <div className="relative z-10 flex min-h-screen flex-col">
+            <div className="relative z-10 flex min-h-screen flex-col pb-16 lg:pb-0">
               <Navbar />
               <main id="main" className="flex-1">
                 {children}

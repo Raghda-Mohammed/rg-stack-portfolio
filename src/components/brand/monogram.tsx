@@ -68,7 +68,9 @@ export function Wordmark({ className = "" }: { className?: string }) {
     <span
       className={`brand-latin font-display text-[1.0625rem] leading-none tracking-[-0.01em] ${className}`}
     >
-      RD <span className="text-muted">Stack</span>
+      <span className="text-ink">R</span>
+      <span className="text-accent">D</span>
+      <span className="text-ink"> Stack</span>
     </span>
   );
 }
