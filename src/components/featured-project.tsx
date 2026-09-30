@@ -141,24 +141,6 @@ export function FeaturedProject({ project }: { project: PortfolioProject }) {
           </Reveal>
         </div>
       </div>
-
-      <Reveal delay={0.05} className="mt-16">
-        <p className="t-label text-muted">{t.work.keyFeatures}</p>
-
-        <ul className="mt-5 grid grid-cols-1 gap-px overflow-hidden rounded-sm border border-line bg-line sm:grid-cols-2 lg:grid-cols-5">
-          {copy.features.map((feature) => (
-            <li key={feature.title} className="bg-bg p-5">
-              <div className="flex items-center gap-2">
-                <span aria-hidden className="h-1 w-1 rounded-full bg-accent" />
-
-                <h4 className="t-heading-m text-ink">{feature.title}</h4>
-              </div>
-
-              <p className="t-caption mt-2 text-muted">{feature.description}</p>
-            </li>
-          ))}
-        </ul>
-      </Reveal>
     </article>
   );
 }

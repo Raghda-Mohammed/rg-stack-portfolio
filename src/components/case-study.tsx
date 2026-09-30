@@ -196,27 +196,6 @@ export function CaseStudy({
           </dl>
         </Block>
 
-        <Block label={t.caseStudy.features}>
-          <ul className="grid grid-cols-1 gap-px overflow-hidden rounded-sm border border-line bg-line sm:grid-cols-2">
-            {copy.features.map((feature) => (
-              <li key={feature.title} className="bg-bg p-5">
-                <div className="flex items-center gap-2">
-                  <span
-                    aria-hidden
-                    className="h-1 w-1 rounded-full bg-accent"
-                  />
-
-                  <h3 className="t-heading-m">{feature.title}</h3>
-                </div>
-
-                <p className="t-caption mt-2 text-muted">
-                  {feature.description}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </Block>
-
         <Block label={t.caseStudy.technology}>
           <TechList items={project.tech} />
         </Block>

@@ -45,7 +45,6 @@ export const en: Dictionary = {
     paragraphs: [
       "I'm a full-stack developer based in Egypt. I work across the entire stack — shaping the interface, modelling the data, writing the API and shipping the result — because the problems worth solving usually sit in the space between those layers.",
       "In practice that means Next.js and TypeScript on the front end, Node.js services and REST APIs on the back end, and PostgreSQL with Drizzle ORM for data. I care about typed boundaries, validation that lives on the server, accessible interfaces, and migrations that are safe to run twice.",
-      "I prefer a small stack I understand deeply over a large fashionable one, and I read source code when documentation runs out.",
     ],
     facts: [
       { label: "Based in", value: "Egypt · Remote" },

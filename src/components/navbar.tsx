@@ -79,7 +79,7 @@ export function Navbar() {
 
   return (
     <header
-      className={`fixed inset-x-0 bottom-0 z-50 border-t transition-colors duration-300 md:sticky md:top-0 md:bottom-auto md:border-t-0 md:border-b ${
+      className={`fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300 ${
         scrolled || open
           ? "border-line bg-bg/90 backdrop-blur-md supports-backdrop-filter:bg-bg/75"
           : "border-transparent bg-bg/90 backdrop-blur-md supports-backdrop-filter:bg-bg/75"

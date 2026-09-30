@@ -19,12 +19,18 @@ const WEBSITE_JSON_LD = {
 export default async function HomePage() {
   const nonce = (await headers()).get("x-nonce") ?? undefined;
   const projects = await getPortfolioProjects();
-  return <>
-    <script nonce={nonce} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }} />
-    <Hero />
-    <About />
-    <Projects projects={projects} />
-    <Skills />
-    <Contact />
-  </>;
+  return (
+    <>
+      <script
+        nonce={nonce}
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
+      />
+      <Hero />
+      <Projects projects={projects} />
+      <About />
+      <Skills />
+      <Contact />
+    </>
+  );
 }
